@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/efdc3c9fa1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="header">
+        <div class="container">
+            <nav>
+                <img src="images/logo.png" class="logo">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-text">
+                <p>UI/UX Designer</p>
+                <h1>Hi, I'm <span> A</span>zharuddin</h1>
+            </div>
+        </div>
+    </div>
+    <!-- --------------------About---------------------- -->
+<div id="about">
+    <div class="container">
+        <div class="row">
+            <div class="about-col-1"> 
+                <img src="images/user.png" alt="">
+            </div>
+            <div class="about-col-2">
+                <h1 class="subtitle">About Me</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod, maxime architecto dignissimos libero ab praesentium, quo aut aperiam at voluptatem nemo vel omnis sunt reiciendis molestiae fugiat officia accusantium. Veniam.</p>
+                <div class="tab-titles" >
+                    <p class="tab-links active-link" onclick="opentab('skills')">Skills</p>
+                    <p class="tab-links"onclick="opentab('experience')">Experience</p>
+                    <p class="tab-links"onclick="opentab('educations')">Education</p>
+                </div>
+                <div class="tab-contents active-tab" id="skills">
+                    <ul>
+                        <li><span>UI?UX </span><br>Desining web/app interface </li>
+                        <li><span>Web development </span><br>Web app development</li>
+                        <li><span>App development </span><br>Building Adroid/ios apps</li>
+                    </ul>
+                </div>
+                <div class="tab-contents" id="experience">
+                    <ul>
+                        <li><span>UI?UX  2 </span><br>Desining web/app interface </li>
+                        <li><span>Web development </span><br>Web app development</li>
+                        <li><span>App development </span><br>Building Adroid/ios apps</li>
+                    </ul>
+                </div>
+                <div class="tab-contents" id="educations">
+                    <ul>
+                        <li><span>2013</span><br>Computer Science Engineering at M.M University </li>
+                        <li><span>2018</span><br>12th at Marwari Collage</li>
+                        <li><span>2016</span><br>10th at U.M.S High School </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ---------------------------------Services -----------------------  -->
+
+<div id="services">
+    <div class="container">
+        <h1 class="subtitle">My Services</h1>
+        <div class="services-list">
+            <div>
+                <i class="fa-solid fa-code"></i>
+                <h2>Web Design</h2>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Error veritatis itaque fugiat velit natus, repellat placeat, vero ipsa, distinctio provident accusamus optio beatae harum. Sint recusandae blanditiis sunt ipsum. Reprehenderit.</p>
+                <a href="#">Learn more</a>
+            </div>
+            <div>
+                <i class="fa-solid fa-crop"></i>
+                <h2>UI?UX Design</h2>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Error veritatis itaque fugiat velit natus, repellat placeat, vero ipsa, distinctio provident accusamus optio beatae harum. Sint recusandae blanditiis sunt ipsum. Reprehenderit.</p>
+                <a href="#">Learn more</a>
+            </div>
+            <div>
+                <i class="fa-brands fa-app-store"></i>                
+                <h2>App Design</h2>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Error veritatis itaque fugiat velit natus, repellat placeat, vero ipsa, distinctio provident accusamus optio beatae harum. Sint recusandae blanditiis sunt ipsum. Reprehenderit.</p>
+                <a href="#">Learn more</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- -----------------------------------portfolio------------------------- -->
+<div id="porfolio">
+    <div class="container">
+        <h1 class="subtitle">My Workd</h1>
+        <div class="work-list">
+            <div class="work">
+                <img src="images/work-1.png" alt="">
+                <div class="layer">
+                    <h3>Social meadia App</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, voluptatum quaerat quidem </p>
+                    <a href="#"><i class="fa-sharp fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+            <div class="work">
+                <img src="images/work-2.png" alt="">
+                <div class="layer">
+                    <h3>Social meadia App</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, voluptatum quaerat quidem </p>
+                    <a href="#"><i class="fa-sharp fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+            <div class="work">
+                <img src="images/work-3.png" alt="">
+                <div class="layer">
+                    <h3>Social meadia App</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, voluptatum quaerat quidem </p>
+                    <a href="#"><i class="fa-sharp fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+        </div>
+        <a href="#" class="btn">See more</a>
+    </div>
+</div>
+
+<script>
+    
+    var tablinks = document.getElementsByClassName("tab-links");
+    var tabcontents =document.getElementsByClassName("tab-contents");
+
+    function opentab(tabname){
+        for(tablink of tablinks){
+            tablink.classList.remove("active-link");
+        }
+        for(tabcontent of tabcontents){
+            tabcontent.classList.remove("active-tab");
+        }
+        event.currentTarget.classList.add("active-link");
+        document.getElementById(tabname).classList.add("active-tab")
+    }
+</script>
+
+</body>
+</html>
