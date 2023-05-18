@@ -77,17 +77,15 @@ window.onscroll = () => {
     // -------------------------read message-----------------
     function sendEmail(){
         Email.send({
-        Host : "smtp.elasticemail.com",
-        Username : "stark155332@gmail.com",
-        Password : "A8CFA9720C30599602ABEE5D602D4AB7F188",
-        To : 'stark155332@gmail.com',
-        From : document.getElementById('email').value,
+        SecureToken : "0fa3daaa-bcf9-4eb2-ad00-e5af1d585318 ",
+        To : 'mdazharuddin155332@gmail.com',
+        From : "stark155332@gmail.com",
         Subject : "New Contact Form Enquiry",
         Body : "Name:"+ document.getElementById('name').value
             + "<br> Email:" + document.getElementById('email').value
             + "<br> Phone no:" + document.getElementById('mobile').value
             + "<br> Message:" + document.getElementById('text').value
     }).then(
-    message => alert("Message sent successfully")
+    message => alert(message)
     );
-    }
+    } 
