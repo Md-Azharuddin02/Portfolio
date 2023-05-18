@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <!-- -----------font-icons-------- -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <!-- ---------header-design -------------------- -->
+    <header class="header">
+        <a href="#" class="logo">Portfolio</a>
+        <i class="bx bx-menu" id="menu-icon"></i>
+
+        <div class="nav navbar">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#project">Project</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </header>
+    <!-- -----------------------home-section-design------------ -->
+    <section class="home" id="home">
+        <div class="home-content">
+            <h3>Hello, It's Me</h3>
+            <h1>Md Azharuddin</h1>
+            <h3>And I'm a <span class="multiple-text"></span></h3>
+            <p>
+                I am passionate about building excellent software that improves the lives of those around me. I specialize in creating software for clients ranging from individuals and small-businesses all the way to large enterprise corporations.
+            </p>
+            <div class="social-media">
+                <a href="https://www.facebook.com/prince.sainger02"><i class="bx bxl-facebook"></i></a>
+                <a href="https://www.instagram.com/__clay__02/"><i class="bx bxl-instagram"></i></a>
+                <a href="#"><i class="bx bxl-twitter"></i></a>
+                <a href="https://www.linkedin.com/in/mdazharuddin02/"><i class="bx bxl-linkedin"></i></a>
+                <a href="https://github.com/Md-Azharuddin02"><i class="bx bxl-github"></i></a>
+            </div>
+            <a href="Md_Azharuddin_Resume.pdf" class="btn" download >Dowload CV</a>
+        </div>
+        <div class="image">
+            <img src="images/img.png" alt="" />
+        </div>
+    </section>
+    <!-- ----------------about-section------------------- -->
+    <section class="about" id="about">
+        <div class="about-image">
+            <img src="images/img.png" alt="" />
+        </div>
+        <div class="about-content">
+            <h2 class="heading">About <span>Me</span></h2>
+            <h3><span class="multiple-text2"></span></h3>
+            <p>
+                Md Azharuddin is a proficient web developer, Java developer, and cloud computing enthusiast. As a web developer, he has the skills to design and develop interactive websites that cater to the needs of his clients. As a Java developer, he has experience in building robust and scalable applications using the Java programming language. With his knowledge of cloud computing, he has the ability to deploy applications to the cloud, enabling businesses to leverage the benefits of cloud computing such as scalability, flexibility, and cost-efficiency. His combination of skills makes him a valuable asset to any organization looking to develop and deploy innovative and efficient software solutions.
+            </p>
+            <!-- <a href="#" class="btn">Read More</a> -->
+            <div class="tab-titles" >
+                <p class="tab-links active-link" onclick="opentab('skills')">Skills</p>
+                <p class="tab-links"onclick="opentab('experience')">Experience</p>
+                <p class="tab-links"onclick="opentab('educations')">Education</p>
+            </div>
+            <div class="tab-contents active-tab" id="skills">
+                <ul>
+                    <li><span>Java - </span>Advance  java,  Java EE,  Hybernet,  Spring,  SpringBoot</li>
+                    <li><span>JavaScript - </span>DOM Manupulation, ES6</li>
+                    <li><span>PHP - </span>Core PHP</li>
+                    <li><span>Data Structure & Algorithm - </span>Building Adroid/ios apps</li>
+                    <li><span>Amezone Web Services - </span>EC2, EC3</li>
+                </ul>
+            </div>
+            <div class="tab-contents" id="experience">
+                <ul>
+                    <li><span>UI?UX  2  - </span>Desining web/app interface </li>
+                    <li><span>Web development  - </span>Web app development</li>
+                    <li><span>App development  - </span>Building Adroid/ios apps</li>
+                </ul>
+            </div>
+            <div class="tab-contents" id="educations">
+                <ul>
+                    <li><span>2013 - </span>Computer Science Engineering at M.M University </li>
+                    <li><span>2018 - </span>12th at Marwari Collage BSEB</li>
+                    <li><span>2016 - </span>10th at U.M.S High School BSEB</li>
+                </ul>
+            </div>
+
+        </div>
+
+    </section>
+    <!-- --------------------our-services------------- -->
+    <section class="services" id="services">
+        <div class="heading">Our <span>Services</span></div>
+        <div class="services-container">
+            <div class="services-box">
+                <i class='bx bx-code-alt'></i>
+                <h3>Web Development</h3>
+                <p>
+                    I am specialize in developing dynamic, responsive, and secure websites using a range of front-end and back-end technologies. With expertise in web development frameworks and strong problem-solving skills,  .
+                </p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+
+            <div class="services-box">
+                <i class='bx bxl-java'></i>
+                <h3>Java Development</h3>
+                <p>
+                    I have expertise in developing scalable and efficient web-based, and enterprise solutions. With strong problem-solving skills and adaptability, I am able to work on a variety of projects and contribute to my team.
+                </p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+
+            <div class="services-box">
+                <i class='bx bx-cloud-upload'></i>
+                <h3>Cloud Computing</h3>
+                <p>
+                    As a cloud developer, I specialize in building and deploying cloud applications. I help businesses of all sizes leverage the power of cloud computing to scale quickly, reduce costs, and improve efficiency..
+                </p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+    </section>
+    <!-- --------------Project-section------------- -->
+    <section class="portfolio" id="project">
+        <h2 class="heading">Latest <span>Project</span></h2>
+        <div class="portfolio-container">
+            <div class="portfolio-box">
+                <img src="images/sports.jpg" alt="" >
+                <div class="portfolio-layer">
+                    <h4>Sports kart</h4>
+                    <p>This is an online e-commerce web application to buy and sell the sports related products.</p>
+                    <a href="https://sport-karts.000webhostapp.com/index.php"><i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            <div class="portfolio-box">
+                <img src="images/hostel2.jpg" alt="" >
+                <div class="portfolio-layer">
+                    <h4> Compalint Board</h4>
+                    <p>This is a web application for Hostel Students to solve the problem they are facing in the hostel.</p>
+                    <a href="#"><i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            <div class="portfolio-box">
+                <img src="images/123.webp" alt=""  >
+                <div class="portfolio-layer">
+                    <h4>Netflix Clone</h4>
+                    <p>This project is under progress.</p>
+                    <a href="#"><i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            <div class="portfolio-box">
+                <img src="images/London.jpg" alt=""  >
+                <div class="portfolio-layer">
+                    <h4>Agumentik</h4>
+                    <p>This web application is mainly built for touris to explore the beauty of the world.</p>
+                    <a href="#"><i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            <div class="portfolio-box">
+                <img src="images/banners.jpg" alt=""  >
+                <div class="portfolio-layer">
+                    <h4>Bigbowl</h4>
+                    <p>Bigbowl is an e-commarce web application to </p>
+                    <a href="#"><i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+            <div class="portfolio-box">
+                <img src="images/the_pranky.jpeg" alt=""  >
+                <div class="portfolio-layer">
+                    <h4>The Pranky</h4>
+                    <p>This is a web application to read and post jokes according to your choise.</p>
+                    <a href="#"><i class='bx bx-link-external'></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ------------------------contact-section------------ -->
+   
+    <section class="contact" id="contact">
+        <h2 class="heading">Contact <span>Me</span></h2>
+        <form onsubmit="sendEmail(); reset(); return false;">
+            <div class="input-box">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-box">
+                <input type="number" id="mobile" placeholder="Mobile Number" required>
+                <input type="text" id="subject" placeholder="Email Subject" required>
+            </div>
+            <textarea name="" id="text" cols="30" rows="10" placeholder="Your Message" required></textarea>
+            <input type="submit"class="btn" value="Send message"> 
+        </form>
+    </section>
+    <!-- footer-section------------ -->
+    <footer class="footer">
+        <div class="footer-text">
+            <p>copyright &copy; 2023 by Md Azharuddin | All rights Reserved.</p>
+        </div>
+        <div class="footer-iconTop">
+            <a href="#home"><i class='bx bx-up-arrow-alt'></i></a>
+        </div>
+    </footer>
+    <!---- -------------------scroll-reveal------------ -->
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <!-- typed - js------------>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <!-- ---------------email-send------------ -->
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <!-- js------------>
+    <script src="script.js"></script>
+    
+<script >
+    var tablinks = document.getElementsByClassName("tab-links");
+    var tabcontents =document.getElementsByClassName("tab-contents");
+
+function opentab(tabname){
+    for(tablink of tablinks){
+        tablink.classList.remove("active-link");
+    }
+    for(tabcontent of tabcontents){
+        tabcontent.classList.remove("active-tab");
+    }
+    event.currentTarget.classList.add("active-link");
+    document.getElementById(tabname).classList.add("active-tab")
+}
+</script> 
+</body>
+
+</html>
+
