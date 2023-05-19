@@ -86,6 +86,6 @@ window.onscroll = () => {
             + "<br> Phone no:" + document.getElementById('mobile').value
             + "<br> Message:" + document.getElementById('text').value
     }).then(
-    message => alert(message)
+    message => alert("Message sent Successfully)
     );
     } 
