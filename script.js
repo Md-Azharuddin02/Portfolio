@@ -55,7 +55,7 @@ window.onscroll = () => {
     // -----------------------tyed js-----------
 
     const tyed = new Typed('.multiple-text',{
-        strings:['Web Developer','Java Developer'],
+        strings:['Web Developer','Java Developer','PHP Developer'],
         typeSpeed:100,
         backSpeed:100,
         backDelay:1000,
@@ -64,7 +64,7 @@ window.onscroll = () => {
 
 
     const tyed2 = new Typed('.multiple-text2',{
-        strings:['Web Developer','Java Developer', 'Cloud Computing'],
+        strings:['Web Developer','Java Developer', 'PHP Developer'],
         typeSpeed:100,
         backSpeed:100,
         backDelay:1000,
