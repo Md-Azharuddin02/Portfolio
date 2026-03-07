@@ -15,9 +15,9 @@ function Navbar() {
 
   // Map nav item names → possible section IDs (handles mismatches like contact vs contact-me)
   const ID_MAP = {
-    home:    ['home', 'hero', 'banner'],
-    about:   ['about', 'about-me'],
-    skills:  ['skills', 'skill'],
+    home: ['home', 'hero', 'banner'],
+    about: ['about', 'about-me'],
+    skills: ['skills', 'skill'],
     project: ['project', 'projects', 'portfolio'],
     contact: ['contact', 'contact-me', 'contactme'],
   };
@@ -58,7 +58,7 @@ function Navbar() {
     const indicator = indicatorRef.current;
     if (!el || !indicator) return;
     const { offsetLeft, offsetWidth } = el;
-    indicator.style.left  = `${offsetLeft}px`;
+    indicator.style.left = `${offsetLeft}px`;
     indicator.style.width = `${offsetWidth}px`;
   }, [active]);
 
@@ -128,21 +128,24 @@ function Navbar() {
             <div className="flex items-center gap-2">
 
               {/* Theme toggle */}
-              <button
-                onClick={handleTheamChange}
-                aria-label="Toggle theme"
-                className={`
+              {!isOpen && (
+                <button
+                  onClick={handleTheamChange}
+                  aria-label="Toggle theme"
+                  className={`
                   p-2 rounded-lg text-xl
                   transition-all duration-200
                   hover:scale-110 active:scale-95
                   ${isDark
-                    ? 'text-amber-400 hover:bg-gray-800'
-                    : 'text-amber-500 hover:bg-gray-100'
-                  }
+                      ? 'text-amber-400 hover:bg-gray-800'
+                      : 'text-amber-500 hover:bg-gray-100'
+                    }
                 `}
-              >
-                {isDark ? <BsBrightnessHighFill /> : <MdDarkMode />}
-              </button>
+                >
+                  {isDark ? <BsBrightnessHighFill /> : <MdDarkMode />}
+                </button>
+              )}
+
 
               {/* Hamburger — mobile only */}
               <button
