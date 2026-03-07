@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './Components/ErrorBoundary'
 import Loader from './Components/Home/Loader';
+import PageNotFound from './Components/PageNotFound';
 
 // Lazy load components
 const Layout = React.lazy(() => import('./Components/Layout/Layout'));
@@ -15,8 +16,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            {/* Add more routes here as needed */}
           </Route>
+            <Route path ="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
     </ErrorBoundary>

@@ -1,9 +1,9 @@
 import sports from "../../assets/images/sports.jpg";
 import parallax from "../../assets/images/parallex.png";
 import spotify from "../../assets/images/spotify.jpg";
-import agumentik from "../../assets/images/agumentik.jpg";
-import bigbowl from "../../assets/images/banners.jpg";
 import thePranky from "../../assets/images/the_pranky.jpeg";
+import BraidedAI from "../../assets/images/App.Braided.png";
+import OneSpot from "../../assets/images/OneSpot.png";
 
 
 const projects = [
@@ -29,17 +29,17 @@ const projects = [
     url: "https://spotifyclone-seven-phi.vercel.app/",
   },
   {
-    name: "Agumentik",
+    name: "Braided AI",
     description:
-      "This web application is mainly built for touris to explore the beauty of the world.",
-    img: agumentik,
-    url: "",
+      "This web application is primarily built as an AI chat application that enables users to interact with an intelligent assistant to get information, solve queries, and perform various tasks efficiently.",
+    img: BraidedAI,
+    url: "https://app.braidedai.com",
   },
   {
-    name: "Bigbowl",
-    description: "Bigbowl is an e-commarce web application to",
-    img: bigbowl,
-    url: "",
+    name: "OneSpot.tv",
+    description: "This web application is built as a video upload platform where users can securely upload and manage videos for clients, making it easy to store, organize, and share video files when needed.",
+    img: OneSpot,
+    url: "https://onespot.tv/login",
   },
   {
     name: "The Pranky",
