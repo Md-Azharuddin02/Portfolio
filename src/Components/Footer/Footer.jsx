@@ -8,8 +8,6 @@ const SOCIAL_LINKS = [
   { Icon: FaTwitter,  href: "https://x.com/Md_Azharuddin02",               label: "Twitter"  },
 ];
 
-const NAV_LINKS = ['Home', 'About', 'Skills', 'Project', 'Contact'];
-
 const Footer = () => {
   const { isDark } = useContext(ThemeContext);
 
@@ -19,8 +17,8 @@ const Footer = () => {
     <footer className={`
       w-full
       ${isDark
-        ? 'bg-gray-900/90 border-gray-700/30'
-        : 'bg-white/90 border-gray-200/60'
+        ? 'bg-[#070A12]/95 border-white/10'
+        : 'bg-[#F7F7F2]/95 border-slate-200/60'
       }
     `}>
 
@@ -31,16 +29,16 @@ const Footer = () => {
           {/* Brand blurb */}
           <div className="max-w-xs">
             <p className={`text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Port<span className="text-amber-500">folio</span>
+              Azhar<span className="text-cyan-500">.</span>
             </p>
-            <p className={`text-sm leading-relaxed ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-              Building scalable, user-focused web experiences with modern JavaScript and cloud-native architecture.
+            <p className={`text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Building modern web experiences, scalable APIs, and automation workflows with React, Node.js, and cloud-native tooling.
             </p>
           </div>
           {/* Social links */}
           <div>
             <p className={`text-xs font-semibold uppercase tracking-widest mb-3
-              ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               Connect
             </p>
             <div className="flex gap-3">
@@ -54,11 +52,11 @@ const Footer = () => {
                   className={`
                     w-9 h-9 rounded-lg flex items-center justify-center
                     transition-all duration-200
-                    hover:scale-110 hover:text-amber-500
+                    hover:scale-110 hover:text-cyan-500
                     border
                     ${isDark
-                      ? 'border-gray-700/60 text-gray-400 hover:border-amber-500/40 hover:bg-amber-500/5'
-                      : 'border-gray-200 text-gray-500 hover:border-amber-400/40 hover:bg-amber-50'
+                      ? 'border-white/10 text-slate-400 hover:border-cyan-400/40 hover:bg-cyan-400/5'
+                      : 'border-slate-200 text-slate-500 hover:border-cyan-700/30 hover:bg-cyan-50'
                     }
                   `}
                 >
@@ -72,20 +70,20 @@ const Footer = () => {
       </div>
 
       {/* ── Divider ── */}
-      <div className={`h-px mx-4 sm:mx-6 lg:mx-8 ${isDark ? 'bg-gray-700/40' : 'bg-gray-200'}`} />
+      <div className={`h-px mx-4 sm:mx-6 lg:mx-8 ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
 
       {/* ── Bottom bar ── */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
 
-          <p className={`text-xs text-center sm:text-left ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+          <p className={`text-xs text-center sm:text-left ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
             © {new Date().getFullYear()}{' '}
-            <span className="text-amber-500 font-medium">Md Azharuddin</span>
+            <span className="text-cyan-500 font-medium">Md Azharuddin</span>
             {' '}— All Rights Reserved.
           </p>
 
-          <p className={`text-xs ${isDark ? 'text-gray-600' : 'text-gray-300'}`}>
-            Built with React & Tailwind CSS
+          <p className={`text-xs ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+            Built with React, Tailwind CSS, and automation-first thinking
           </p>
 
           {/* Scroll to top */}
@@ -94,10 +92,10 @@ const Footer = () => {
             aria-label="Scroll to top"
             className={`
               w-9 h-9 rounded-lg flex items-center justify-center
-              bg-amber-500 hover:bg-amber-600
-              text-white shadow-md
+              bg-cyan-400 hover:bg-cyan-300
+              text-slate-950 shadow-md
               transition-all duration-300
-              hover:scale-110 hover:-translate-y-0.5 hover:shadow-amber-500/30 hover:shadow-lg
+              hover:scale-110 hover:-translate-y-0.5 hover:shadow-cyan-500/30 hover:shadow-lg
               active:scale-95
               group
             `}

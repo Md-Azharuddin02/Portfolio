@@ -1,11 +1,19 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-    const [isDark, setIsDark] = useState(true);
+    const [isDark, setIsDark] = useState(() => {
+        const savedTheme = localStorage.getItem("portfolio-theme");
+        return savedTheme ? savedTheme === "dark" : true;
+    });
     const [active, setActive] = useState('home');
     const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        localStorage.setItem("portfolio-theme", isDark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark", isDark);
+    }, [isDark]);
 
     const handleTheamChange = () => {
         setIsDark(!isDark);
@@ -13,8 +21,8 @@ export const ThemeProvider = ({ children }) => {
 
 
     const theme = {
-        themeColor: isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900',
-        shadow: isDark ? "bg-white/10 border-white/20" : 'bg-black/10 border-black/20'
+        themeColor: isDark ? 'bg-[#070A12] text-white' : 'bg-[#F7F7F2] text-slate-950',
+        shadow: isDark ? "bg-white/10 border-white/15" : 'bg-slate-950/5 border-slate-950/10'
     };
 
     const handleSetActive = (e) => {

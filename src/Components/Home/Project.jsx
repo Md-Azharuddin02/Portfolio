@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { ThemeContext } from "../../Store/ThemeContext ";
 import projects from "./projectsData";
 
@@ -16,12 +16,12 @@ function Project() {
         {/* Heading */}
         <div className="text-center mb-6">
           <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-            ${isDark ? "text-white" : "text-gray-900"}`}>
-            Latest <span className="text-amber-500">Projects</span>
+            ${isDark ? "text-white" : "text-slate-950"}`}>
+            Selected <span className="text-cyan-400">Work</span>
           </h2>
           <p className={`mt-3 text-sm sm:text-base
-            ${isDark ? "text-gray-100" : "text-gray-800"}`}>
-            A selection of things I've built
+            ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            Product-facing builds with modern UI, APIs, and real deployment surfaces
           </p>
         </div>
 
@@ -31,12 +31,12 @@ function Project() {
             <article
               key={index}
               className={`
-                group relative rounded-2xl overflow-hidden
+                group relative rounded-[1.35rem] overflow-hidden
                 border transition-all duration-300
                 hover:-translate-y-1 hover:shadow-2xl
                 ${isDark
-                  ? "border-gray-700/40 bg-gray-800/30 hover:border-gray-600/60"
-                  : "border-gray-200 bg-white hover:border-gray-300 shadow-sm"
+                  ? "border-white/10 bg-white/[0.045] hover:border-cyan-300/35"
+                  : "border-slate-200 bg-white hover:border-cyan-700/30 shadow-sm"
                 }
               `}
             >
@@ -53,10 +53,10 @@ function Project() {
                   absolute inset-0 flex flex-col items-center justify-center gap-3 p-4
                   opacity-0 group-hover:opacity-100
                   transition-all duration-300
-                  ${isDark ? "bg-gray-900/85" : "bg-black/70"}
+                  ${isDark ? "bg-slate-950/88" : "bg-slate-950/78"}
                 `}>
                   <p className={`text-center text-xs sm:text-sm leading-relaxed line-clamp-3
-                    ${isDark ? "text-gray-300" : "text-gray-200"}`}>
+                    ${isDark ? "text-slate-300" : "text-slate-100"}`}>
                     {project.description}
                   </p>
                   <a
@@ -66,9 +66,9 @@ function Project() {
                     aria-label={`Visit ${project.name}`}
                     className="
                       inline-flex items-center gap-2
-                      bg-amber-500 hover:bg-amber-400
-                      text-white text-xs sm:text-sm font-semibold
-                      px-4 py-2 rounded-lg
+                      bg-cyan-400 hover:bg-cyan-300
+                      text-slate-950 text-xs sm:text-sm font-black
+                      px-4 py-2 rounded-full
                       transition-all duration-200 hover:scale-105
                     "
                   >
@@ -80,16 +80,16 @@ function Project() {
 
               {/* Card footer */}
               <div className={`px-4 py-3 sm:px-5 sm:py-4 border-t
-                ${isDark ? "border-gray-700/30" : "border-gray-100"}`}>
+                ${isDark ? "border-white/10" : "border-slate-100"}`}>
                 <h3 className={`font-semibold text-sm sm:text-base truncate
-                  ${isDark ? "text-white" : "text-gray-900"}`}>
+                  ${isDark ? "text-white" : "text-slate-950"}`}>
                   {project.name}
                 </h3>
                 {project.tech && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {project.tech.slice(0, 3).map((t) => (
                       <span key={t} className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full
-                        ${isDark ? "bg-gray-700/60 text-gray-400" : "bg-gray-100 text-gray-500"}`}>
+                        ${isDark ? "bg-cyan-300/10 text-cyan-200" : "bg-cyan-50 text-cyan-700"}`}>
                         {t}
                       </span>
                     ))}

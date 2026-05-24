@@ -24,6 +24,8 @@ const ABOUT_DATA = {
       description: [
         "Built and maintained scalable full-stack web applications using React, Next.js, Node.js, and FastAPI.",
         "Designed and developed RESTful APIs and microservices handling thousands of daily requests.",
+        "Integrated AI-assisted workflows for support, data handling, and productivity-focused product features.",
+        "Prepared cloud-ready release flows using AWS, Docker, and GitHub Actions practices.",
         "Implemented JWT and OAuth2 authentication with RBAC authorization.",
         "Optimized database queries across PostgreSQL, MongoDB, and MySQL.",
         "Automated CI/CD pipelines using GitHub Actions and Docker.",
@@ -51,10 +53,10 @@ const TabButton = ({ isActive, onClick, children, isDark }) => (
       px-5 sm:px-7 py-2.5 rounded-xl font-semibold text-sm sm:text-base
       transition-all duration-300
       ${isActive
-        ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20 scale-[1.03]"
+        ? "bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/20 scale-[1.03]"
         : isDark
-          ? "bg-gray-800/60 text-gray-300 hover:bg-gray-700/70 hover:text-white border border-gray-700/40"
-          : "bg-white/60 text-gray-600 hover:bg-white border border-gray-200 hover:text-gray-900"
+          ? "bg-white/[0.04] text-slate-300 hover:bg-white/[0.08] hover:text-white border border-white/10"
+          : "bg-white/70 text-slate-600 hover:bg-white border border-slate-200 hover:text-slate-950"
       }
     `}
   >
@@ -73,35 +75,35 @@ const InfoCard = ({ item, isDark }) => {
       rounded-xl border p-4 sm:p-5 lg:p-6
       transition-all duration-300 hover:scale-[1.01]
       ${isDark
-        ? "bg-gray-800/30 border-gray-700/30 hover:bg-gray-800/50"
-        : "bg-white/60 border-gray-200 hover:bg-white shadow-sm hover:shadow-md"
+        ? "bg-white/[0.04] border-white/10 hover:bg-white/[0.07]"
+        : "bg-white/75 border-slate-200 hover:bg-white shadow-sm hover:shadow-md"
       }
     `}>
       {/* Header row */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 mb-3">
         <div className="flex-1 min-w-0">
           <h3 className={`font-bold text-base sm:text-lg leading-snug
-            ${isDark ? "text-white" : "text-gray-900"}`}>
+            ${isDark ? "text-white" : "text-slate-950"}`}>
             {item.title}
           </h3>
-          <p className={`text-sm mt-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+          <p className={`text-sm mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             {item.institution}
           </p>
         </div>
-        <span className="text-amber-500 font-semibold text-xs sm:text-sm whitespace-nowrap shrink-0 mt-0.5">
+        <span className="text-cyan-500 font-semibold text-xs sm:text-sm whitespace-nowrap shrink-0 mt-0.5">
           {item.year}
         </span>
       </div>
 
       {/* Divider */}
-      <div className={`h-px mb-3 ${isDark ? "bg-gray-700/40" : "bg-gray-100"}`} />
+      <div className={`h-px mb-3 ${isDark ? "bg-white/10" : "bg-slate-100"}`} />
 
       {/* Description list */}
       <ul className="space-y-1.5">
         {visible.map((line, i) => (
           <li key={i} className={`flex gap-2 text-sm leading-relaxed
-            ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-            <span className="text-amber-500 mt-0.5 shrink-0">▸</span>
+            ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+            <span className="text-cyan-400 mt-0.5 shrink-0">▸</span>
             <span>{line}</span>
           </li>
         ))}
@@ -110,7 +112,7 @@ const InfoCard = ({ item, isDark }) => {
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="mt-3 text-amber-500 hover:text-amber-400 text-xs font-semibold
+          className="mt-3 text-cyan-500 hover:text-cyan-400 text-xs font-semibold
             transition-colors duration-200 flex items-center gap-1"
         >
           {expanded ? "Show less ↑" : `Show ${item.description.length - PREVIEW} more ↓`}
@@ -134,10 +136,10 @@ function About() {
         {/* Heading */}
         <div className="text-center mb-6 ">
           <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-            ${isDark ? "text-white" : "text-gray-900"}`}>
-            About <span className="text-amber-500">Me</span>
+            ${isDark ? "text-white" : "text-slate-950"}`}>
+            About <span className="text-cyan-400">Me</span>
           </h2>
-           <p className={`mt-3 text-sm sm:text-base ${isDark ? "text-gray-100" : "text-gray-800"}`}>
+           <p className={`mt-3 text-sm sm:text-base ${isDark ? "text-slate-300" : "text-slate-600"}`}>
             {activeTab === "education"
               ? "Where I built my foundation in computer science"
               : "Where I've applied my skills in the real world"
@@ -149,8 +151,8 @@ function About() {
         <div className={`
           max-w-4xl mx-auto rounded-2xl border p-5 sm:p-8
           ${isDark
-            ? "bg-gray-900/40 border-gray-700/30"
-            : "bg-white/40 border-gray-200"
+            ? "bg-white/[0.04] border-white/10"
+            : "bg-white/70 border-slate-200"
           }
           shadow-[0_4px_30px_rgba(0,0,0,0.08)]
         `}>
@@ -158,10 +160,10 @@ function About() {
           {/* Tab bar */}
           <div className="flex justify-center gap-3 sm:gap-4 mb-8">
             <TabButton isActive={activeTab === "education"} onClick={() => setActiveTab("education")} isDark={isDark}>
-              🎓 Education
+              Education
             </TabButton>
             <TabButton isActive={activeTab === "experience"} onClick={() => setActiveTab("experience")} isDark={isDark}>
-              💼 Experience
+              Experience
             </TabButton>
           </div>
 

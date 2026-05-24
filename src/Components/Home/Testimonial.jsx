@@ -22,40 +22,40 @@ function TestimonialCard({ t, isDark }) {
       flex-shrink-0
       w-[260px] sm:w-[300px] md:w-[340px] lg:w-[380px]
       h-[200px] sm:h-[210px] md:h-[220px]
-      rounded-2xl border
+      rounded-[1.35rem] border
       flex flex-col justify-between
       p-4 sm:p-5
       transition-all duration-300
       ${isDark
-        ? "bg-gray-800/50 border-gray-700/40 hover:bg-gray-800/80"
-        : "bg-white border-gray-200 hover:shadow-lg"
+        ? "bg-white/[0.045] border-white/10 hover:bg-white/[0.07]"
+        : "bg-white border-slate-200 hover:shadow-lg"
       }
       shadow-[0_2px_20px_rgba(0,0,0,0.07)]
     `}>
       {/* Top: quote + text */}
       <div className="flex flex-col gap-2">
-        <span className="text-amber-500/40 text-3xl font-serif leading-none select-none">"</span>
+        <span className="text-cyan-400/50 text-3xl font-serif leading-none select-none">"</span>
         <p className={`text-xs sm:text-sm leading-relaxed italic line-clamp-4
-          ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+          ${isDark ? "text-slate-300" : "text-slate-600"}`}>
           {t.text}
         </p>
       </div>
 
       {/* Bottom: divider + person */}
       <div className="flex flex-col gap-3 mt-2">
-        <div className={`h-px ${isDark ? "bg-gray-700/40" : "bg-gray-100"}`} />
+        <div className={`h-px ${isDark ? "bg-white/10" : "bg-slate-100"}`} />
         <div className="flex items-center gap-3">
           <img
             src={t.image}
             alt={t.name}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-amber-500/40 shrink-0"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-cyan-400/40 shrink-0"
           />
           <div className="min-w-0">
             <p className={`font-semibold text-xs sm:text-sm truncate
-              ${isDark ? "text-white" : "text-gray-900"}`}>
+              ${isDark ? "text-white" : "text-slate-950"}`}>
               {t.name}
             </p>
-            <p className="text-amber-500 text-[11px] sm:text-xs truncate">{t.role}</p>
+            <p className="text-cyan-500 text-[11px] sm:text-xs truncate">{t.role}</p>
           </div>
         </div>
       </div>
@@ -93,11 +93,11 @@ function Testimonial() {
           {/* Heading */}
           <div className="text-center mb-10 sm:mb-12">
             <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-              ${isDark ? "text-white" : "text-gray-900"}`}>
-              Team <span className="text-amber-500">Endorsements</span>
+              ${isDark ? "text-white" : "text-slate-950"}`}>
+              Team <span className="text-cyan-400">Endorsements</span>
             </h2>
             <p className={`mt-3 text-sm sm:text-base
-              ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+              ${isDark ? "text-slate-400" : "text-slate-500"}`}>
               What my colleagues say about working with me
             </p>
           </div>

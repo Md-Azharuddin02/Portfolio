@@ -3,7 +3,7 @@ import { ThemeContext } from "../../Store/ThemeContext ";
 import {
   FaHtml5, FaCss3Alt, FaJs, FaReact, FaBootstrap,
   FaNodeJs, FaGit, FaAws, FaDocker, FaPython,
-  FaDatabase, FaServer, FaCloud, FaDesktop,
+  FaDatabase, FaServer, FaCloud, FaDesktop, FaBrain, FaRobot,
 } from "react-icons/fa";
 import { TbBrandRedux, TbApi } from "react-icons/tb";
 import {
@@ -11,6 +11,7 @@ import {
   SiRedis, SiNextdotjs, SiTailwindcss, SiFastapi, SiDjango,
   SiGraphql, SiPostgresql, SiGithubactions, SiReactquery,
   SiMui, SiVercel, SiNetlify, SiPostman, SiSwagger,
+  SiOpenai, SiAmazonaws, SiAwslambda,
 } from "react-icons/si";
 
 const FRONTEND = [
@@ -46,6 +47,8 @@ const BACKEND = [
 
 const DEVOPS = [
   { Icon: FaAws,           name: "AWS",            color: "#fbbf24" },
+  { Icon: SiAmazonaws,     name: "Amazon S3",      color: "#f59e0b" },
+  { Icon: SiAwslambda,     name: "AWS Lambda",     color: "#fb923c" },
   { Icon: FaDocker,        name: "Docker",         color: "#60a5fa" },
   { Icon: SiGithubactions, name: "GitHub Actions", color: "#d1d5db" },
   { Icon: FaGit,           name: "Git",            color: "#f97316" },
@@ -55,10 +58,20 @@ const DEVOPS = [
   { Icon: SiSwagger,       name: "Swagger",        color: "#4ade80" },
 ];
 
+const AI_AUTOMATION = [
+  { Icon: SiOpenai,        name: "OpenAI APIs",      color: "#22d3ee" },
+  { Icon: TbApi,           name: "LLM Orchestration", color: "#4ade80" },
+  { Icon: FaBrain,         name: "AI Assistants",    color: "#c084fc" },
+  { Icon: TbApi,           name: "Prompt Workflows", color: "#f472b6" },
+  { Icon: FaRobot,         name: "Task Automation",  color: "#2dd4bf" },
+  { Icon: FaCloud,         name: "Cloud Functions",  color: "#93c5fd" },
+];
+
 const ROWS = [
-  { skills: FRONTEND, direction: "left",  label: "Frontend",           Icon: FaDesktop, iconColor: "#f59e0b" },
-  { skills: BACKEND,  direction: "right", label: "Backend & Databases", Icon: FaServer,  iconColor: "#22c55e" },
-  { skills: DEVOPS,   direction: "left",  label: "Cloud & DevOps",     Icon: FaCloud,   iconColor: "#60a5fa" },
+  { skills: FRONTEND,      direction: "left",  label: "Frontend Engineering",       Icon: FaDesktop, iconColor: "#22d3ee" },
+  { skills: BACKEND,       direction: "right", label: "Backend & Databases",        Icon: FaServer,  iconColor: "#22c55e" },
+  { skills: DEVOPS,        direction: "left",  label: "AWS, Cloud & DevOps",        Icon: FaCloud,   iconColor: "#60a5fa" },
+  { skills: AI_AUTOMATION, direction: "right", label: "AI & Workflow Automation",   Icon: FaBrain,   iconColor: "#c084fc" },
 ];
 
 const MarqueeRow = ({ skills, direction, isDark, label, Icon, iconColor }) => {
@@ -75,16 +88,16 @@ const MarqueeRow = ({ skills, direction, isDark, label, Icon, iconColor }) => {
       {/* Label row */}
       <div className="flex items-center gap-2 mb-3 px-1">
         <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0
-          ${isDark ? "bg-gray-800" : "bg-gray-100"}`}>
+          ${isDark ? "bg-white/[0.06]" : "bg-slate-100"}`}>
           <Icon style={{ color: iconColor }} className="text-sm" />
         </div>
         <span className={`text-xs font-semibold uppercase tracking-widest whitespace-nowrap
-          ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+          ${isDark ? "text-slate-400" : "text-slate-500"}`}>
           {label}
         </span>
-        <div className={`flex-1 h-px ${isDark ? "bg-gray-800" : "bg-gray-200"}`} />
+        <div className={`flex-1 h-px ${isDark ? "bg-white/10" : "bg-slate-200"}`} />
         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full shrink-0
-          ${isDark ? "bg-gray-800 text-gray-600" : "bg-gray-100 text-gray-400"}`}>
+          ${isDark ? "bg-white/[0.06] text-slate-400" : "bg-slate-100 text-slate-500"}`}>
           {skills.length} skills
         </span>
       </div>
@@ -115,7 +128,7 @@ const MarqueeRow = ({ skills, direction, isDark, label, Icon, iconColor }) => {
                 rounded-xl border-l-[3px] shrink-0 cursor-default
                 transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.04]
                 ${isDark
-                  ? "bg-gray-800/50 hover:bg-gray-800 shadow-sm hover:shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
+                  ? "bg-white/[0.05] hover:bg-white/[0.08] shadow-sm hover:shadow-[0_4px_16px_rgba(0,0,0,0.35)]"
                   : "bg-white/80 hover:bg-white shadow-sm hover:shadow-md"
                 }
               `}
@@ -127,7 +140,7 @@ const MarqueeRow = ({ skills, direction, isDark, label, Icon, iconColor }) => {
                 aria-hidden="true"
               />
               <span className={`text-xs sm:text-sm font-medium whitespace-nowrap
-                ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                 {skill.name}
               </span>
             </div>
@@ -157,12 +170,12 @@ const Skills = () => {
           <div className="text-center mb-6">
             <h2 id="skills-title"
               className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-                ${isDark ? "text-white" : "text-gray-900"}`}>
-              My <span className="text-amber-500">Skills</span>
+                ${isDark ? "text-white" : "text-slate-950"}`}>
+              Full-stack <span className="text-cyan-400">Cloud + AI</span> Stack
             </h2>
              <p className={`mt-3 text-sm sm:text-base
-              ${isDark ? "text-gray-100" : "text-gray-800"}`}>
-              Technologies I work with every day
+              ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+              React interfaces, backend APIs, AWS delivery, and AI automation workflows
             </p>
           </div>
 

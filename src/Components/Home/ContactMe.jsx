@@ -4,11 +4,11 @@ import { ThemeContext } from "../../Store/ThemeContext ";
 const inputClass = (isDark) =>
   `w-full px-4 py-3 text-sm sm:text-base rounded-xl border
   transition-colors duration-200
-  focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500
+  focus:outline-none focus:ring-2 focus:ring-cyan-500/35 focus:border-cyan-500
   placeholder:text-gray-400
   ${isDark
-    ? "bg-gray-800/50 text-white border-gray-700/50 hover:border-gray-600/60"
-    : "bg-white text-gray-900 border-gray-200 hover:border-gray-300"
+    ? "bg-white/[0.045] text-white border-white/10 hover:border-cyan-300/30"
+    : "bg-white text-slate-950 border-slate-200 hover:border-cyan-700/25"
   }`;
 
 function ContactMe() {
@@ -21,7 +21,11 @@ function ContactMe() {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log(data);
+    const subject = encodeURIComponent(data.subject || "Portfolio inquiry");
+    const body = encodeURIComponent(
+      `Hi Azhar,\n\n${data.body}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}`,
+    );
+    window.location.href = `mailto:mdazharuddin02@gmail.com?subject=${subject}&body=${body}`;
     setData({ name: "", email: "", subject: "", phone: "", body: "" });
     setShowAlert(true);
     setTimeout(() => setShowAlert(false), 3000);
@@ -43,17 +47,17 @@ function ContactMe() {
       >
         <div className={`
           flex items-center gap-3 px-5 py-4 rounded-2xl border shadow-xl
-          ${isDark ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-200 text-gray-900"}
+          ${isDark ? "bg-slate-950 border-white/10 text-white" : "bg-white border-slate-200 text-slate-950"}
         `}>
-          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/15 shrink-0">
-            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/15 shrink-0">
+            <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <div>
-            <p className="font-semibold text-sm">Message sent!</p>
-            <p className={`text-xs mt-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-              Thank you for reaching out.
+            <p className="font-semibold text-sm">Email draft prepared</p>
+            <p className={`text-xs mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+              Your mail app will open with the details.
             </p>
           </div>
         </div>
@@ -63,12 +67,12 @@ function ContactMe() {
         {/* Heading */}
         <div className="text-center mb-6">
           <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-            ${isDark ? "text-white" : "text-gray-900"}`}>
-            Contact <span className="text-amber-500">Me</span>
+            ${isDark ? "text-white" : "text-slate-950"}`}>
+            Start a <span className="text-cyan-400">Project</span>
           </h2>
           <p className={`mt-3 text-sm sm:text-base
-            ${isDark ? "text-gray-100" : "text-gray-800"}`}>
-            Have a project in mind? Let's talk.
+            ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            Have a product, workflow, or automation idea? Send the details.
           </p>
         </div>
 
@@ -78,8 +82,8 @@ function ContactMe() {
           className={`
             max-w-2xl mx-auto rounded-2xl border p-5 sm:p-8
             ${isDark
-              ? "bg-gray-900/40 border-gray-700/30"
-              : "bg-white/60 border-gray-200"
+              ? "bg-white/[0.04] border-white/10"
+              : "bg-white/75 border-slate-200"
             }
             shadow-[0_4px_30px_rgba(0,0,0,0.08)]
           `}
@@ -112,13 +116,13 @@ function ContactMe() {
             type="submit"
             className="
               w-full sm:w-auto block sm:mx-auto
-              bg-amber-500 hover:bg-amber-600 active:scale-95
-              text-white font-semibold
-              px-10 py-3 rounded-xl text-sm sm:text-base
-              transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/20
+              bg-cyan-400 hover:bg-cyan-300 active:scale-95
+              text-slate-950 font-black
+              px-10 py-3 rounded-full text-sm sm:text-base
+              transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/20
             "
           >
-            Send Message →
+            Prepare Email
           </button>
         </form>
       </div>

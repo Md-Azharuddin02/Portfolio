@@ -4,7 +4,23 @@ import { MdDarkMode, MdCancel } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { ThemeContext } from '../../Store/ThemeContext ';
 
-const NAV_ITEMS = ['home', 'about', 'skills', 'project', 'contact'];
+const NAV_ITEMS = ['home', 'skills', 'about', 'automation', 'project', 'contact'];
+const NAV_LABELS = {
+  home: 'Home',
+  skills: 'Skills',
+  about: 'About',
+  automation: 'Automation',
+  project: 'Projects',
+  contact: 'Contact',
+};
+const ID_MAP = {
+  home: ['home', 'hero', 'banner'],
+  about: ['about', 'about-me'],
+  skills: ['skills', 'skill'],
+  automation: ['automation', 'workflow', 'automations'],
+  project: ['project', 'projects', 'portfolio'],
+  contact: ['contact', 'contact-me', 'contactme'],
+};
 
 function Navbar() {
   const { isDark, handleTheamChange, active, handleSetActive, isOpen, handleMenuBar } = useContext(ThemeContext);
@@ -12,15 +28,6 @@ function Navbar() {
   const indicatorRef = useRef(null);
   const navRef = useRef(null);
   const linkRefs = useRef({});
-
-  // Map nav item names → possible section IDs (handles mismatches like contact vs contact-me)
-  const ID_MAP = {
-    home: ['home', 'hero', 'banner'],
-    about: ['about', 'about-me'],
-    skills: ['skills', 'skill'],
-    project: ['project', 'projects', 'portfolio'],
-    contact: ['contact', 'contact-me', 'contactme'],
-  };
 
   const scrollToSection = useCallback((item, e) => {
     e?.preventDefault();
@@ -52,6 +59,33 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const sections = NAV_ITEMS.map((item) => {
+      const candidates = ID_MAP[item] ?? [item];
+      const element = candidates.map((id) => document.getElementById(id)).find(Boolean);
+      return { item, element };
+    }).filter(({ element }) => element);
+
+    if (!sections.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible?.target?.id) {
+          const match = sections.find(({ element }) => element === visible.target);
+          if (match) handleSetActive({ target: { name: match.item } });
+        }
+      },
+      { rootMargin: '-35% 0px -50% 0px', threshold: [0.1, 0.35, 0.6] },
+    );
+
+    sections.forEach(({ element }) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [handleSetActive]);
+
   // Slide the active indicator under the correct link
   useEffect(() => {
     const el = linkRefs.current[active];
@@ -70,13 +104,13 @@ function Navbar() {
           transition-all duration-300
           ${scrolled
             ? isDark
-              ? 'bg-gray-900/95 shadow-[0_4px_30px_rgba(0,0,0,0.4)] py-2'
-              : 'bg-white/95 shadow-[0_4px_30px_rgba(0,0,0,0.08)] py-2'
+              ? 'bg-[#070A12]/90 shadow-[0_12px_45px_rgba(0,0,0,0.45)] py-2 border-b border-white/10'
+              : 'bg-[#F7F7F2]/90 shadow-[0_12px_45px_rgba(15,23,42,0.08)] py-2 border-b border-slate-900/10'
             : isDark
-              ? 'bg-gray-900/80 py-4'
-              : 'bg-white/80 py-4'
+              ? 'bg-[#070A12]/75 py-4'
+              : 'bg-[#F7F7F2]/75 py-4'
           }
-          backdrop-blur-md
+          backdrop-blur-xl
         `}
       >
         <div className="container mx-auto px-4 sm:px-6">
@@ -87,20 +121,20 @@ function Navbar() {
               href="#home"
               onClick={(e) => scrollToSection('home', e)}
               className={`
-                text-xl font-bold tracking-tight relative z-10
+                text-xl font-black tracking-tight relative z-10
                 transition-colors duration-200
                 ${isDark ? 'text-white' : 'text-gray-900'}
               `}
             >
-              Port<span className="text-amber-500">folio</span>
+              Azhar<span className="text-cyan-500">.</span>
             </a>
 
             {/* Desktop nav — with sliding underline indicator */}
             <div ref={navRef} className="hidden md:flex items-center gap-1 relative">
-              {/* Sliding amber underline */}
+              {/* Sliding active underline */}
               <span
                 ref={indicatorRef}
-                className="absolute bottom-0 h-0.5 bg-amber-500 rounded-full transition-all duration-300 ease-[cubic-bezier(.34,1.56,.64,1)]"
+                className="absolute bottom-0 h-0.5 bg-cyan-400 rounded-full transition-all duration-300 ease-[cubic-bezier(.34,1.56,.64,1)]"
               />
 
               {NAV_ITEMS.map((item) => (
@@ -112,14 +146,14 @@ function Navbar() {
                   className={`
                     px-4 py-2 rounded-lg text-sm font-medium
                     transition-colors duration-200
-                    hover:text-amber-500
+                    hover:text-cyan-400
                     ${active === item
-                      ? 'text-amber-500'
+                      ? 'text-cyan-400'
                       : isDark ? 'text-gray-300' : 'text-gray-600'
                     }
                   `}
                 >
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                  {NAV_LABELS[item]}
                 </a>
               ))}
             </div>
@@ -137,8 +171,8 @@ function Navbar() {
                   transition-all duration-200
                   hover:scale-110 active:scale-95
                   ${isDark
-                      ? 'text-amber-400 hover:bg-gray-800'
-                      : 'text-amber-500 hover:bg-gray-100'
+                      ? 'text-cyan-300 hover:bg-white/10'
+                      : 'text-cyan-700 hover:bg-slate-900/5'
                     }
                 `}
                 >
@@ -156,7 +190,7 @@ function Navbar() {
                   md:hidden p-2 rounded-lg text-xl
                   transition-all duration-200
                   hover:scale-110 active:scale-95
-                  ${isDark ? 'text-white hover:bg-gray-800' : 'text-gray-900 hover:bg-gray-100'}
+                  ${isDark ? 'text-white hover:bg-white/10' : 'text-gray-900 hover:bg-slate-900/5'}
                 `}
               >
                 {isOpen
@@ -191,7 +225,7 @@ function Navbar() {
         {/* Slide-in panel */}
         <div className={`
           absolute top-0 right-0 h-full w-72
-          ${isDark ? 'bg-gray-900' : 'bg-white'}
+          ${isDark ? 'bg-[#070A12]' : 'bg-[#F7F7F2]'}
           shadow-2xl flex flex-col
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
@@ -203,7 +237,7 @@ function Navbar() {
             ${isDark ? 'border-gray-800' : 'border-gray-100'}
           `}>
             <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Port<span className="text-amber-500">folio</span>
+              Azhar<span className="text-cyan-500">.</span>
             </span>
             <button
               onClick={handleMenuBar}
@@ -229,17 +263,17 @@ function Navbar() {
                   transition-all duration-200
                   ${active === item
                     ? isDark
-                      ? 'bg-amber-500/10 text-amber-400 border-l-2 border-amber-500'
-                      : 'bg-amber-50 text-amber-600 border-l-2 border-amber-500'
+                      ? 'bg-cyan-300/10 text-cyan-300 border-l-2 border-cyan-400'
+                      : 'bg-cyan-50 text-cyan-700 border-l-2 border-cyan-500'
                     : isDark
                       ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }
                 `}
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+                {NAV_LABELS[item]}
                 {active === item && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-400" />
                 )}
               </a>
             ))}
@@ -259,7 +293,7 @@ function Navbar() {
               `}
             >
               <span>{isDark ? 'Switch to Light' : 'Switch to Dark'}</span>
-              <span className="text-amber-500 text-lg">
+              <span className="text-cyan-500 text-lg">
                 {isDark ? <BsBrightnessHighFill /> : <MdDarkMode />}
               </span>
             </button>

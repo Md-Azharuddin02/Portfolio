@@ -8,7 +8,7 @@ function Layout() {
   const { isDark, theme } = useContext(ThemeContext);
 
   return (
-    <main className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} ${theme.themeColor}`}>
+    <main className={`min-h-screen ${isDark ? 'bg-[#070A12]' : 'bg-[#F7F7F2]'} ${theme.themeColor}`}>
       <Navbar />
       <Outlet />
       <Footer/>
