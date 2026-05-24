@@ -811,18 +811,6 @@ function OfflinePage({ onRetry, isRetrying, retryCount }) {
               </>
             )}
           </button>
-
-          <a
-            href="/"
-            className="inline-flex items-center justify-center gap-2
-              px-7 py-3 rounded-xl
-              border border-slate-700 hover:border-cyan-400/40
-              text-slate-300 hover:text-white
-              font-semibold transition-all duration-300
-              hover:bg-white/5 hover:scale-105"
-          >
-            Open cached home
-          </a>
         </div>
 
         {/* Reconnect bar */}

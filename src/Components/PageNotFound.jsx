@@ -642,18 +642,6 @@ export default function PageNotFound() {
             Return home
           </a>
 
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center gap-2
-            px-6 py-3 rounded-xl w-full sm:w-auto
-            border border-slate-600 hover:border-cyan-400/60
-            text-slate-300 hover:text-white font-semibold
-            transition-all duration-300 hover:bg-white/5 hover:scale-105"
-          >
-            <FaArrowLeft className="shrink-0" />
-            Go back
-          </button>
         </div>
 
 
