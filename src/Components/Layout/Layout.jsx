@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../Header/Navbar';
 import Footer from '../Footer/Footer';
 import { ThemeContext } from '../../Store/ThemeContext ';
-import { CustomCursor } from "../interactive/CustomCursor";
+import { CustomCursor } from '../interactive/CustomCursor';
 import { ScrollProgress } from '../interactive/ScrollProgress';
 import { SmoothScroll } from '../interactive/SmoothScroll';
 
