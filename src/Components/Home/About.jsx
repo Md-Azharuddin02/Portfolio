@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ThemeContext } from "../../Store/ThemeContext ";
 import { aboutData } from "../../content/about";
-import { Tabs } from "../../components/ui/Tabs";
+import { Tabs } from "../ui/Tabs";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 
 const tabItems = [

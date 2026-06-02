@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ExternalLink, Sparkles } from "lucide-react";
 import { ThemeContext } from "../../Store/ThemeContext ";
 import projects from "./projectsData";
-import { Dialog } from "../../components/ui/Dialog";
+import { Dialog } from "../ui/Dialog";
 import { TiltCard } from "../interactive/TiltCard";
 import { MagneticButton } from "../interactive/MagneticButton";
 import { Button } from "../ui/Button";
