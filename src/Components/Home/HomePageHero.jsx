@@ -13,8 +13,8 @@ import resume from "../../assets/MdAzharuddinFullStackResume.pdf";
 import { AnimatedText } from "../interactive/AnimatedText";
 import { MagneticButton } from "../interactive/MagneticButton";
 import { TiltCard } from "../interactive/TiltCard";
-import { Badge } from "../../components/ui/Badge";
-import { Button } from "../../components/ui/Button";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 
 const cld = new Cloudinary({ cloud: { cloudName: "dqpkciwvo" } });

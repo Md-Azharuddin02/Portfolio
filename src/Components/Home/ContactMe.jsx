@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ThemeContext } from "../../Store/ThemeContext ";
 import { MagneticButton } from "../interactive/MagneticButton";
-import { Button } from "../../components/ui/Button";
+import { Button } from "../ui/Button";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 
 const schema = z.object({

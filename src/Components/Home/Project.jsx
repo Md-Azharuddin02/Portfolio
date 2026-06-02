@@ -6,7 +6,7 @@ import projects from "./projectsData";
 import { Dialog } from "../../components/ui/Dialog";
 import { TiltCard } from "../interactive/TiltCard";
 import { MagneticButton } from "../interactive/MagneticButton";
-import { Button } from "../../components/ui/Button";
+import { Button } from "../ui/Button";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 
 function Project() {

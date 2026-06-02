@@ -88,7 +88,6 @@ function MarqueeRow({ items, isDark, reverse = false, rowId }) {
 function Testimonial() {
   const { theme, isDark } = useContext(ThemeContext);
 
-  // Memoized rows — duplicated once for seamless marquee loop
   const { row1, row2 } = useMemo(() => {
     const doubled = [...testimonials, ...testimonials];
     const reversed = [...testimonials].reverse();
