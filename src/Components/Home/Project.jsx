@@ -4,8 +4,8 @@ import { ArrowRight, ExternalLink, Sparkles } from "lucide-react";
 import { ThemeContext } from "../../Store/ThemeContext ";
 import projects from "./projectsData";
 import { Dialog } from "../../components/ui/Dialog";
-import { TiltCard } from "../../components/interactive/TiltCard";
-import { MagneticButton } from "../../components/interactive/MagneticButton";
+import { TiltCard } from "../interactive/TiltCard";
+import { MagneticButton } from "../interactive/MagneticButton";
 import { Button } from "../../components/ui/Button";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 

@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../../Store/ThemeContext ";
-import { MarqueeRow } from "../../components/interactive/MarqueeRow";
-import { TiltCard } from "../../components/interactive/TiltCard";
+import { MarqueeRow } from "../interactive/MarqueeRow";
+import { TiltCard } from "../interactive/TiltCard";
 import { stackCategories, skillRows } from "../../content/skills";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 import { cn } from "../../lib/utils";

@@ -5,7 +5,7 @@ import { Send, CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ThemeContext } from "../../Store/ThemeContext ";
-import { MagneticButton } from "../../components/interactive/MagneticButton";
+import { MagneticButton } from "../interactive/MagneticButton";
 import { Button } from "../../components/ui/Button";
 import { fadeUp, staggerContainer } from "../../lib/motion";
 

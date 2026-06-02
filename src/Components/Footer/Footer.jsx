@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { ThemeContext } from "../../Store/ThemeContext ";
-import { MagneticButton } from "../../components/interactive/MagneticButton";
+import { MagneticButton } from "../interactive/MagneticButton";
 
 const socials = [
   { Icon: FaGithub, href: "https://github.com/Md-Azharuddin02", label: "GitHub" },
