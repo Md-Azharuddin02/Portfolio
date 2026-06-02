@@ -1,63 +1,85 @@
-import React, { useRef, useContext } from "react";
+import React, { useContext, useMemo } from "react";
+import { motion } from "framer-motion";
 import { ThemeContext } from "../../Store/ThemeContext ";
-import vivek       from "../../assets/people/Vivek.jfif";
-import saurabh     from "../../assets/people/saurabh.jfif";
-import simran      from "../../assets/people/Simran.jfif";
-import shruthi     from "../../assets/people/one.jpg";
-import SaurabhRay  from "../../assets/people/SaurabhRay.jpeg";
-import ChandanPrakash from "../../assets/people/ChandanPrakash.webp";
-
-const TESTIMONIALS = [
-  { id: 1, name: "Vivek Kumar Mishra",  role: "Senior Software Engineer",          image: vivek,          text: "Working with him has been a pleasure. His attention to detail, strong problem-solving skills, and commitment to quality make him a reliable and valuable team member." },
-  { id: 2, name: "Simran Bharti",       role: "Automation Tester",                 image: simran,         text: "One of the most dedicated developers I've worked with. Their ability to grasp complex requirements is impressive." },
-  { id: 3, name: "Saurabh Sharma",      role: "Software Engineer",                 image: saurabh,        text: "An exceptional team player with strong technical skills. They brought innovative ideas to every project." },
-  { id: 4, name: "Faznah Mehrin",       role: "Scrum Master",                      image: shruthi,        text: "Great collaboration skills and attention to design details. They understand both aesthetics and functionality." },
-  { id: 5, name: "Saurabh Ray",         role: "Application Support Engineer",      image: SaurabhRay,     text: "Worked with Azhar for 2 years — adaptable, hardworking, and eager to learn. He consistently delivers his best and collaborates effectively." },
-  { id: 6, name: "Chandan Prakash",     role: "Software Engineer",                 image: ChandanPrakash, text: "I've worked with Md Azharuddin for 2+ years. He's hardworking, dependable, and eager to learn. A great team player who communicates well." },
-];
+import { testimonials } from "../../content/testimonials";
+import { fadeUp, staggerContainer } from "../../lib/motion";
 
 function TestimonialCard({ t, isDark }) {
   return (
-    <div className={`
-      flex-shrink-0
-      w-[260px] sm:w-[300px] md:w-[340px] lg:w-[380px]
-      h-[200px] sm:h-[210px] md:h-[220px]
-      rounded-[1.35rem] border
-      flex flex-col justify-between
-      p-4 sm:p-5
-      transition-all duration-300
-      ${isDark
-        ? "bg-white/[0.045] border-white/10 hover:bg-white/[0.07]"
-        : "bg-white border-slate-200 hover:shadow-lg"
-      }
-      shadow-[0_2px_20px_rgba(0,0,0,0.07)]
-    `}>
-      {/* Top: quote + text */}
-      <div className="flex flex-col gap-2">
-        <span className="text-cyan-400/50 text-3xl font-serif leading-none select-none">"</span>
-        <p className={`text-xs sm:text-sm leading-relaxed italic line-clamp-4
-          ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+    <article
+      className={`group flex h-[230px] w-[280px] shrink-0 flex-col justify-between rounded-2xl border p-5 transition duration-300 sm:w-[340px] lg:w-[390px] ${
+        isDark
+          ? "border-white/10 bg-white/[0.045] hover:border-cyan-300/30 hover:bg-white/[0.07]"
+          : "border-slate-200 bg-white hover:shadow-xl"
+      }`}
+    >
+      <div>
+        <span
+          aria-hidden="true"
+          className="block origin-left text-5xl font-black leading-none text-cyan-300/35 transition group-hover:scale-110"
+        >
+          &ldquo;
+        </span>
+        <p
+          className={`line-clamp-4 text-sm italic leading-6 ${
+            isDark ? "text-slate-300" : "text-slate-600"
+          }`}
+        >
           {t.text}
         </p>
       </div>
 
-      {/* Bottom: divider + person */}
-      <div className="flex flex-col gap-3 mt-2">
-        <div className={`h-px ${isDark ? "bg-white/10" : "bg-slate-100"}`} />
-        <div className="flex items-center gap-3">
-          <img
-            src={t.image}
-            alt={t.name}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-cyan-400/40 shrink-0"
-          />
-          <div className="min-w-0">
-            <p className={`font-semibold text-xs sm:text-sm truncate
-              ${isDark ? "text-white" : "text-slate-950"}`}>
-              {t.name}
-            </p>
-            <p className="text-cyan-500 text-[11px] sm:text-xs truncate">{t.role}</p>
-          </div>
+      <div
+        className={`flex items-center gap-3 border-t pt-4 ${
+          isDark ? "border-white/10" : "border-slate-100"
+        }`}
+      >
+        <img
+          src={t.image}
+          alt={`${t.name}, ${t.role}`}
+          loading="lazy"
+          decoding="async"
+          width="44"
+          height="44"
+          className="h-11 w-11 rounded-full object-cover ring-2 ring-cyan-300/40 transition group-hover:ring-cyan-300"
+        />
+        <div className="min-w-0">
+          <p
+            className={`truncate text-sm font-black ${
+              isDark ? "text-white" : "text-slate-950"
+            }`}
+          >
+            {t.name}
+          </p>
+          <p className="truncate text-xs font-semibold text-cyan-400">
+            {t.role}
+          </p>
         </div>
+      </div>
+    </article>
+  );
+}
+
+function MarqueeRow({ items, isDark, reverse = false, rowId }) {
+  return (
+    <div
+      className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]"
+      role="region"
+      aria-label="Testimonials carousel"
+    >
+      <div
+        className={`flex w-max gap-5 motion-safe:animate-marquee ${
+          reverse ? "motion-safe:[animation-direction:reverse]" : ""
+        }`}
+      >
+        {items.map((t, index) => (
+          <TestimonialCard
+            key={`${rowId}-${t.id}-${index}`}
+            t={t}
+            isDark={isDark}
+            aria-hidden={index >= items.length / 2}
+          />
+        ))}
       </div>
     </div>
   );
@@ -65,70 +87,54 @@ function TestimonialCard({ t, isDark }) {
 
 function Testimonial() {
   const { theme, isDark } = useContext(ThemeContext);
-  const trackRef = useRef(null);
 
-  const pause  = () => { if (trackRef.current) trackRef.current.style.animationPlayState = "paused"; };
-  const resume = () => { if (trackRef.current) trackRef.current.style.animationPlayState = "running"; };
-
-  // Duplicate for seamless loop
-  const doubled = [...TESTIMONIALS, ...TESTIMONIALS];
+  // Memoized rows — duplicated once for seamless marquee loop
+  const { row1, row2 } = useMemo(() => {
+    const doubled = [...testimonials, ...testimonials];
+    const reversed = [...testimonials].reverse();
+    const doubledReverse = [...reversed, ...reversed];
+    return { row1: doubled, row2: doubledReverse };
+  }, []);
 
   return (
-    <>
-      <style>{`
-        @keyframes testimonialScroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .testimonial-track {
-          animation: testimonialScroll ${TESTIMONIALS.length * 5}s linear infinite;
-        }
-      `}</style>
-
-      <section
-        id="testimonials"
-        className={`w-full ${theme?.themeColor} md:py-12 sm:py-4 lg:py-12 overflow-hidden`}
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Heading */}
-          <div className="text-center mb-10 sm:mb-12">
-            <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-              ${isDark ? "text-white" : "text-slate-950"}`}>
+    <section
+      id="testimonials"
+      aria-labelledby="testimonials-heading"
+      className={`w-full overflow-hidden ${theme?.themeColor} py-16 sm:py-20`}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+        >
+          <motion.div variants={fadeUp} className="mb-10 text-center">
+            <h2
+              id="testimonials-heading"
+              className={`text-3xl font-black sm:text-4xl lg:text-5xl ${
+                isDark ? "text-white" : "text-slate-950"
+              }`}
+            >
               Team <span className="text-cyan-400">Endorsements</span>
             </h2>
-            <p className={`mt-3 text-sm sm:text-base
-              ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-              What my colleagues say about working with me
-            </p>
-          </div>
-        </div>
-
-        {/* Scroll strip — contained to same width as the projects grid */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div
-            className="relative overflow-hidden"
-            style={{
-              maskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)",
-            }}
-          >
-            <div
-              ref={trackRef}
-              className="testimonial-track flex items-stretch gap-4 sm:gap-5 lg:gap-6 w-max"
-              onMouseEnter={pause}
-              onMouseLeave={resume}
-              onTouchStart={pause}
-              onTouchEnd={resume}
+            <p
+              className={`mt-3 text-sm sm:text-base ${
+                isDark ? "text-slate-400" : "text-slate-500"
+              }`}
             >
-              {doubled.map((t, i) => (
-                <TestimonialCard key={`${t.id}-${i}`} t={t} isDark={isDark} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+              What colleagues and collaborators say about working with me
+            </p>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      <div className="space-y-5">
+        <MarqueeRow items={row1} isDark={isDark} rowId="row-1" />
+        <MarqueeRow items={row2} isDark={isDark} rowId="row-2" reverse />
+      </div>
+    </section>
   );
 }
 
-export default Testimonial;
+export default React.memo(Testimonial);

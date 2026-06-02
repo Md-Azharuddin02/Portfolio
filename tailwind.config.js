@@ -47,6 +47,14 @@ export default {
           '33%': { content: '..' },
           '66%': { content: '...' },
           '100%': { content: '.' }
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'gradient-shift': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
         }
       },
       animation: {
@@ -55,14 +63,28 @@ export default {
         'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
         'bounce-subtle': 'bounce-subtle 3s ease-in-out infinite',
         'spin-fast': 'spin 0.8s linear infinite',
-        'ellipsis': 'ellipsis 1.4s infinite'
+        'ellipsis': 'ellipsis 1.4s infinite',
+        'marquee': 'marquee 34s linear infinite',
+        'gradient-shift': 'gradient-shift 6s ease infinite',
       },
       colors: {
+        accent: {
+          DEFAULT: '#22D3EE',
+          foreground: '#03151A',
+          glow: 'rgb(34 211 238 / 0.5)',
+        },
         amber: {
           400: '#FBBF24',
           500: '#F59E0B',
           600: '#D97706'
         }
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        glow: '0 0 40px -10px rgb(34 211 238 / 0.5)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

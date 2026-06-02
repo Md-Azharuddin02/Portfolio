@@ -1,179 +1,195 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ThemeContext } from "../../Store/ThemeContext ";
+import { aboutData } from "../../content/about";
+import { Tabs } from "../../components/ui/Tabs";
+import { fadeUp, staggerContainer } from "../../lib/motion";
 
-const ABOUT_DATA = {
-  education: [
-    {
-      year: "2019 - 2023",
-      title: "Bachelor of Technology",
-      institution: "Maharishi Markandeshwar University",
-      description: ["Computer Science and Engineering"],
-    },
-    {
-      year: "2016 - 2018",
-      title: "Higher Secondary",
-      institution: "Marwari College",
-      description: ["Science with Computer Science"],
-    },
-  ],
-  experience: [
-    {
-      year: "2023 - Present",
-      title: "Software Engineer",
-      institution: "M&S Consulting Noida",
-      description: [
-        "Built and maintained scalable full-stack web applications using React, Next.js, Node.js, and FastAPI.",
-        "Designed and developed RESTful APIs and microservices handling thousands of daily requests.",
-        "Integrated AI-assisted workflows for support, data handling, and productivity-focused product features.",
-        "Prepared cloud-ready release flows using AWS, Docker, and GitHub Actions practices.",
-        "Implemented JWT and OAuth2 authentication with RBAC authorization.",
-        "Optimized database queries across PostgreSQL, MongoDB, and MySQL.",
-        "Automated CI/CD pipelines using GitHub Actions and Docker.",
-        "Collaborated in Agile teams to deliver scalable features.",
-      ],
-    },
-    {
-      year: "2022 - 2023",
-      title: "Software Engineering Virtual Experience",
-      institution: "JPMorgan Chase & Co.",
-      description: [
-        "Integrated real-time stock market data feeds using Python.",
-        "Processed large market datasets to identify trends and patterns.",
-        "Developed data visualizations for financial insights.",
-        "Used Git for version control following industry-standard practices.",
-      ],
-    },
-  ],
-};
+const tabItems = [
+  { id: "experience", label: "Experience" },
+  { id: "education", label: "Education" },
+];
 
-const TabButton = ({ isActive, onClick, children, isDark }) => (
-  <button
-    onClick={onClick}
-    className={`
-      px-5 sm:px-7 py-2.5 rounded-xl font-semibold text-sm sm:text-base
-      transition-all duration-300
-      ${isActive
-        ? "bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/20 scale-[1.03]"
-        : isDark
-          ? "bg-white/[0.04] text-slate-300 hover:bg-white/[0.08] hover:text-white border border-white/10"
-          : "bg-white/70 text-slate-600 hover:bg-white border border-slate-200 hover:text-slate-950"
-      }
-    `}
-  >
-    {children}
-  </button>
-);
-
-const InfoCard = ({ item, isDark }) => {
+function InfoCard({ item, isDark, index }) {
   const [expanded, setExpanded] = useState(false);
-  const PREVIEW = 3;
-  const hasMore = item.description.length > PREVIEW;
-  const visible = expanded ? item.description : item.description.slice(0, PREVIEW);
+  const preview = 3;
+  const hasMore = item.description.length > preview;
+  const visible = expanded
+    ? item.description
+    : item.description.slice(0, preview);
 
   return (
-    <div className={`
-      rounded-xl border p-4 sm:p-5 lg:p-6
-      transition-all duration-300 hover:scale-[1.01]
-      ${isDark
-        ? "bg-white/[0.04] border-white/10 hover:bg-white/[0.07]"
-        : "bg-white/75 border-slate-200 hover:bg-white shadow-sm hover:shadow-md"
-      }
-    `}>
-      {/* Header row */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 mb-3">
-        <div className="flex-1 min-w-0">
-          <h3 className={`font-bold text-base sm:text-lg leading-snug
-            ${isDark ? "text-white" : "text-slate-950"}`}>
+    <motion.article
+      layout
+      variants={{
+        hidden: { opacity: 0, x: -28 },
+        show: {
+          opacity: 1,
+          x: 0,
+          transition: {
+            duration: 0.55,
+            delay: index * 0.06,
+            ease: [0.22, 1, 0.36, 1],
+          },
+        },
+      }}
+      className={`relative rounded-2xl border p-5 sm:p-6 ${
+        isDark
+          ? "border-white/10 bg-white/[0.045]"
+          : "border-slate-200 bg-white/80 shadow-sm"
+      }`}
+    >
+      <span className="absolute -left-[37px] top-7 hidden h-4 w-4 rounded-full border-4 border-slate-950 bg-cyan-300 shadow-glow md:block" />
+
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3
+            className={`text-lg font-black ${
+              isDark ? "text-white" : "text-slate-950"
+            }`}
+          >
             {item.title}
           </h3>
-          <p className={`text-sm mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+          <p
+            className={`mt-1 text-sm ${
+              isDark ? "text-slate-400" : "text-slate-500"
+            }`}
+          >
             {item.institution}
           </p>
         </div>
-        <span className="text-cyan-500 font-semibold text-xs sm:text-sm whitespace-nowrap shrink-0 mt-0.5">
+
+        <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-300">
           {item.year}
         </span>
       </div>
 
-      {/* Divider */}
-      <div className={`h-px mb-3 ${isDark ? "bg-white/10" : "bg-slate-100"}`} />
+      <div className={`mb-4 h-px ${isDark ? "bg-white/10" : "bg-slate-100"}`} />
 
-      {/* Description list */}
-      <ul className="space-y-1.5">
-        {visible.map((line, i) => (
-          <li key={i} className={`flex gap-2 text-sm leading-relaxed
-            ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-            <span className="text-cyan-400 mt-0.5 shrink-0">▸</span>
-            <span>{line}</span>
-          </li>
-        ))}
-      </ul>
+      <motion.ul layout className="space-y-2">
+        <AnimatePresence initial={false}>
+          {visible.map((line, lineIndex) => (
+            <motion.li
+              key={`${item.title}-${lineIndex}`}
+              layout
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className={`flex gap-2 text-sm leading-relaxed ${
+                isDark ? "text-slate-400" : "text-slate-600"
+              }`}
+            >
+              <span className="mt-0.5 shrink-0 text-cyan-300">▸</span>
+              <span>{line}</span>
+            </motion.li>
+          ))}
+        </AnimatePresence>
+      </motion.ul>
 
       {hasMore && (
         <button
-          onClick={() => setExpanded(!expanded)}
-          className="mt-3 text-cyan-500 hover:text-cyan-400 text-xs font-semibold
-            transition-colors duration-200 flex items-center gap-1"
+          onClick={() => setExpanded((value) => !value)}
+          className="mt-4 text-sm font-bold text-cyan-300 transition hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          {expanded ? "Show less ↑" : `Show ${item.description.length - PREVIEW} more ↓`}
+          {expanded ? "Show less" : `Show ${item.description.length - preview} more`}
         </button>
       )}
-    </div>
+    </motion.article>
   );
-};
+}
 
 function About() {
-  const [activeTab, setActiveTab] = useState("education");
+  const [activeTab, setActiveTab] = useState("experience");
   const { theme, isDark } = useContext(ThemeContext);
 
   return (
     <section
       id="about"
-      className={`w-full ${theme?.themeColor} md:py-12 sm:py-4 lg:py-12`}
+      className={`w-full ${theme?.themeColor} py-16 sm:py-20`}
+      aria-labelledby="about-title"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mx-auto max-w-4xl"
+        >
+          <motion.div variants={fadeUp} className="mb-8 text-center">
+            <h2
+              id="about-title"
+              className={`text-3xl font-black sm:text-4xl lg:text-5xl ${
+                isDark ? "text-white" : "text-slate-950"
+              }`}
+            >
+              About <span className="text-cyan-400">Me</span>
+            </h2>
 
-        {/* Heading */}
-        <div className="text-center mb-6 ">
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-            ${isDark ? "text-white" : "text-slate-950"}`}>
-            About <span className="text-cyan-400">Me</span>
-          </h2>
-           <p className={`mt-3 text-sm sm:text-base ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-            {activeTab === "education"
-              ? "Where I built my foundation in computer science"
-              : "Where I've applied my skills in the real world"
-            }
-          </p>
-        </div>
+            <p
+              className={`mt-3 text-sm sm:text-base ${
+                isDark ? "text-slate-300" : "text-slate-600"
+              }`}
+            >
+              Experienced Full-Stack Developer focused on Frontend, Backend, and AI Integration.
+            </p>
+          </motion.div>
 
-        {/* Card */}
-        <div className={`
-          max-w-4xl mx-auto rounded-2xl border p-5 sm:p-8
-          ${isDark
-            ? "bg-white/[0.04] border-white/10"
-            : "bg-white/70 border-slate-200"
-          }
-          shadow-[0_4px_30px_rgba(0,0,0,0.08)]
-        `}>
+          <motion.div variants={fadeUp} className="mb-8 flex justify-center">
+            <Tabs
+              tabs={tabItems}
+              active={activeTab}
+              onChange={setActiveTab}
+            />
+          </motion.div>
 
-          {/* Tab bar */}
-          <div className="flex justify-center gap-3 sm:gap-4 mb-8">
-            <TabButton isActive={activeTab === "education"} onClick={() => setActiveTab("education")} isDark={isDark}>
-              Education
-            </TabButton>
-            <TabButton isActive={activeTab === "experience"} onClick={() => setActiveTab("experience")} isDark={isDark}>
-              Experience
-            </TabButton>
-          </div>
+          <motion.div
+            layout
+            transition={{
+              layout: {
+                duration: 0.35,
+                ease: [0.22, 1, 0.36, 1],
+              },
+            }}
+            className="relative overflow-hidden"
+          >
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+                className="relative space-y-4 md:pl-10"
+              >
+                <span
+                  className={`absolute left-[11px] top-2 bottom-2 hidden w-px overflow-hidden rounded-full md:block ${
+                    isDark ? "bg-white/10" : "bg-slate-200"
+                  }`}
+                >
+                  <motion.span
+                    className="block h-full w-full origin-top rounded-full bg-gradient-to-b from-cyan-300 to-emerald-300"
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  />
+                </span>
 
-          {/* Cards */}
-          <div className="space-y-4">
-            {ABOUT_DATA[activeTab].map((item, i) => (
-              <InfoCard key={`${activeTab}-${i}`} item={item} isDark={isDark} />
-            ))}
-          </div>
-        </div>
+                {aboutData[activeTab].map((item, index) => (
+                  <InfoCard
+                    key={`${activeTab}-${item.title}`}
+                    item={item}
+                    isDark={isDark}
+                    index={index}
+                  />
+                ))}
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,130 +1,111 @@
 import React, { useContext, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "framer-motion";
+import { Send, CheckCircle2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { ThemeContext } from "../../Store/ThemeContext ";
+import { MagneticButton } from "../../components/interactive/MagneticButton";
+import { Button } from "../../components/ui/Button";
+import { fadeUp, staggerContainer } from "../../lib/motion";
 
-const inputClass = (isDark) =>
-  `w-full px-4 py-3 text-sm sm:text-base rounded-xl border
-  transition-colors duration-200
-  focus:outline-none focus:ring-2 focus:ring-cyan-500/35 focus:border-cyan-500
-  placeholder:text-gray-400
-  ${isDark
-    ? "bg-white/[0.045] text-white border-white/10 hover:border-cyan-300/30"
-    : "bg-white text-slate-950 border-slate-200 hover:border-cyan-700/25"
-  }`;
+const schema = z.object({
+  name: z.string().min(2, "Enter your name"),
+  email: z.string().email("Enter a valid email"),
+  phone: z.string().min(7, "Enter a valid phone number"),
+  subject: z.string().min(3, "Add a subject"),
+  body: z.string().min(10, "Tell me a little more"),
+});
+
+function Field({ label, error, as = "input", isDark, ...props }) {
+  const Comp = as;
+  return (
+    <label className="group relative block">
+      <Comp
+        {...props}
+        placeholder=" "
+        className={`peer w-full rounded-xl border px-4 pb-2.5 pt-5 text-sm transition focus:outline-none focus:ring-2 focus:ring-cyan-400/35 ${
+          isDark ? "border-white/10 bg-white/[0.045] text-white hover:border-cyan-300/30" : "border-slate-200 bg-white text-slate-950 hover:border-cyan-700/25"
+        } ${error ? "border-rose-400 focus:ring-rose-400/30" : ""}`}
+      />
+      <span className={`pointer-events-none absolute left-4 top-3 text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs ${isDark ? "text-slate-400 peer-focus:text-cyan-200" : "text-slate-500 peer-focus:text-cyan-700"}`}>
+        {label}
+      </span>
+      {error && <span className="mt-1 block text-xs font-semibold text-rose-400">{error.message}</span>}
+    </label>
+  );
+}
 
 function ContactMe() {
   const { theme, isDark } = useContext(ThemeContext);
-  const [showAlert, setShowAlert] = useState(false);
-  const [data, setData] = useState({ name: "", email: "", subject: "", phone: "", body: "" });
+  const [showToast, setShowToast] = useState(false);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
 
-  const handleFormInput = (e) =>
-    setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = (data) => {
     const subject = encodeURIComponent(data.subject || "Portfolio inquiry");
-    const body = encodeURIComponent(
-      `Hi Azhar,\n\n${data.body}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}`,
-    );
+    const body = encodeURIComponent(`Hi Azhar,\n\n${data.body}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}`);
     window.location.href = `mailto:mdazharuddin02@gmail.com?subject=${subject}&body=${body}`;
-    setData({ name: "", email: "", subject: "", phone: "", body: "" });
-    setShowAlert(true);
-    setTimeout(() => setShowAlert(false), 3000);
+    reset();
+    setShowToast(true);
+    window.setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
-    <section
-      id="contact"
-      className={`${theme?.themeColor} py-12 relative`}
-    >
-      {/* Toast */}
-      <div
-        aria-live="polite"
-        className={`
-          fixed left-1/2 -translate-x-1/2 top-20 z-[60] w-[90vw] max-w-sm
-          transition-all duration-300 ease-in-out
-          ${showAlert ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-3 pointer-events-none"}
-        `}
-      >
-        <div className={`
-          flex items-center gap-3 px-5 py-4 rounded-2xl border shadow-xl
-          ${isDark ? "bg-slate-950 border-white/10 text-white" : "bg-white border-slate-200 text-slate-950"}
-        `}>
-          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/15 shrink-0">
-            <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <div>
-            <p className="font-semibold text-sm">Email draft prepared</p>
-            <p className={`text-xs mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-              Your mail app will open with the details.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
-        <div className="text-center mb-6">
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold
-            ${isDark ? "text-white" : "text-slate-950"}`}>
-            Start a <span className="text-cyan-400">Project</span>
-          </h2>
-          <p className={`mt-3 text-sm sm:text-base
-            ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-            Have a product, workflow, or automation idea? Send the details.
-          </p>
-        </div>
-
-        {/* Form card */}
-        <form
-          onSubmit={handleFormSubmit}
-          className={`
-            max-w-2xl mx-auto rounded-2xl border p-5 sm:p-8
-            ${isDark
-              ? "bg-white/[0.04] border-white/10"
-              : "bg-white/75 border-slate-200"
-            }
-            shadow-[0_4px_30px_rgba(0,0,0,0.08)]
-          `}
-        >
-          {/* Row 1 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-            <input onChange={handleFormInput} type="text"  name="name"    value={data.name}    placeholder="Full Name"      required className={inputClass(isDark)} />
-            <input onChange={handleFormInput} type="email" name="email"   value={data.email}   placeholder="Email Address"  required className={inputClass(isDark)} />
-          </div>
-
-          {/* Row 2 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-            <input onChange={handleFormInput} type="tel"  name="phone"   value={data.phone}   placeholder="Mobile Number"  required className={inputClass(isDark)} />
-            <input onChange={handleFormInput} type="text" name="subject" value={data.subject} placeholder="Email Subject"  required className={inputClass(isDark)} />
-          </div>
-
-          {/* Textarea */}
-          <textarea
-            onChange={handleFormInput}
-            name="body"
-            value={data.body}
-            placeholder="Your Message"
-            required
-            rows={5}
-            className={`${inputClass(isDark)} resize-none mb-5`}
-          />
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="
-              w-full sm:w-auto block sm:mx-auto
-              bg-cyan-400 hover:bg-cyan-300 active:scale-95
-              text-slate-950 font-black
-              px-10 py-3 rounded-full text-sm sm:text-base
-              transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/20
-            "
+    <section id="contact" className={`relative overflow-hidden ${theme?.themeColor} py-16 sm:py-20`} aria-labelledby="contact-title">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(34,211,238,.14),transparent_28rem),radial-gradient(circle_at_80%_80%,rgba(52,211,153,.12),transparent_26rem)]" />
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            className="fixed left-1/2 top-20 z-[1300] w-[90vw] max-w-sm -translate-x-1/2"
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            aria-live="polite"
           >
-            Prepare Email
-          </button>
-        </form>
+            <div className={`flex items-center gap-3 rounded-2xl border px-5 py-4 shadow-xl ${isDark ? "border-white/10 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"}`}>
+              <CheckCircle2 className="text-emerald-400" />
+              <div>
+                <p className="text-sm font-black">Email draft prepared</p>
+                <p className={`mt-0.5 text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>Your mail app will open with the details.</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
+          <motion.div variants={fadeUp} className="mb-8 text-center">
+            <h2 id="contact-title" className={`text-3xl font-black sm:text-4xl lg:text-5xl ${isDark ? "text-white" : "text-slate-950"}`}>
+              Start a <span className="text-cyan-400">Project</span>
+            </h2>
+            <p className={`mt-3 text-sm sm:text-base ${isDark ? "text-slate-300" : "text-slate-600"}`}>Have a product concept or AI feature in mind? Share the details and let's ship it.</p>
+          </motion.div>
+
+          <motion.form
+            variants={fadeUp}
+            onSubmit={handleSubmit(onSubmit)}
+            className={`mx-auto max-w-2xl rounded-2xl border p-5 shadow-[0_24px_90px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-8 ${isDark ? "border-white/10 bg-white/[0.045]" : "border-slate-200 bg-white/80"}`}
+            noValidate
+          >
+            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Full Name" isDark={isDark} error={errors.name} {...register("name")} />
+              <Field label="Email Address" isDark={isDark} error={errors.email} type="email" {...register("email")} />
+            </div>
+            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Mobile Number" isDark={isDark} error={errors.phone} type="tel" {...register("phone")} />
+              <Field label="Email Subject" isDark={isDark} error={errors.subject} {...register("subject")} />
+            </div>
+            <Field label="Your Message" as="textarea" rows={5} isDark={isDark} error={errors.body} {...register("body")} />
+            <div className="mt-6 flex justify-center">
+              <MagneticButton>
+                <Button type="submit" className="motion-safe:active:scale-95">
+                  Prepare Email <Send size={16} />
+                </Button>
+              </MagneticButton>
+            </div>
+          </motion.form>
+        </motion.div>
       </div>
     </section>
   );

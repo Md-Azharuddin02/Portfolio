@@ -1,113 +1,113 @@
-import React, { useContext } from 'react';
-import { FaArrowUp, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
-import { ThemeContext } from '../../Store/ThemeContext ';
+import React, { useContext, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUp } from "lucide-react";
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { ThemeContext } from "../../Store/ThemeContext ";
+import { MagneticButton } from "../../components/interactive/MagneticButton";
 
-const SOCIAL_LINKS = [
-  { Icon: FaGithub,   href: "https://github.com/Md-Azharuddin02",          label: "GitHub"   },
-  { Icon: FaLinkedin, href: "https://www.linkedin.com/in/mdazharuddin02/",  label: "LinkedIn" },
-  { Icon: FaTwitter,  href: "https://x.com/Md_Azharuddin02",               label: "Twitter"  },
+const socials = [
+  { Icon: FaGithub, href: "https://github.com/Md-Azharuddin02", label: "GitHub" },
+  { Icon: FaLinkedin, href: "https://www.linkedin.com/in/mdazharuddin02/", label: "LinkedIn" },
+  { Icon: FaTwitter, href: "https://x.com/Md_Azharuddin02", label: "Twitter" },
 ];
 
-const Footer = () => {
-  const { isDark } = useContext(ThemeContext);
+const footerLinks = [
+  { href: "#home", label: "Home" },
+  { href: "#skills", label: "Skills" },
+  { href: "#project", label: "Projects" },
+  { href: "#contact", label: "Contact" },
+];
 
-  const handleScrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+function Footer() {
+  const { isDark } = useContext(ThemeContext);
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleScrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className={`
-      w-full
-      ${isDark
-        ? 'bg-[#070A12]/95 border-white/10'
-        : 'bg-[#F7F7F2]/95 border-slate-200/60'
-      }
-    `}>
-
-      {/* ── Top section ── */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-
-          {/* Brand blurb */}
-          <div className="max-w-xs">
-            <p className={`text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Azhar<span className="text-cyan-500">.</span>
-            </p>
-            <p className={`text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Building modern web experiences, scalable APIs, and automation workflows with React, Node.js, and cloud-native tooling.
+    <footer className={`w-full border-t ${isDark ? "border-white/10 bg-[#070A12]/95" : "border-slate-200/60 bg-[#F7F7F2]/95"}`}>
+      <div className="container mx-auto px-4 pb-6 pt-10 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
+          <div className="max-w-sm">
+            <p className={`mb-2 text-xl font-black ${isDark ? "text-white" : "text-slate-950"}`}>Azhar<span className="text-cyan-400">.</span></p>
+            <p className={`text-sm leading-relaxed ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+              Full Stack Developer with 2+ years of experience building high performance web apps, scalable APIs, and AI integrated features using React, Next.js, Node.js, FastAPI, and AWS.
             </p>
           </div>
-          {/* Social links */}
+
+          <nav className="flex flex-wrap gap-x-5 gap-y-2" aria-label="Footer navigation">
+            {footerLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`group relative text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-950"}`}
+              >
+                {link.label}
+                <span className="absolute -bottom-1 left-0 h-0.5 w-0 rounded-full bg-cyan-300 transition-all group-hover:w-full" />
+              </a>
+            ))}
+          </nav>
+
           <div>
-            <p className={`text-xs font-semibold uppercase tracking-widest mb-3
-              ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Connect
-            </p>
+            <p className={`mb-3 text-xs font-bold uppercase tracking-widest ${isDark ? "text-slate-400" : "text-slate-500"}`}>Connect</p>
             <div className="flex gap-3">
-              {SOCIAL_LINKS.map(({ Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className={`
-                    w-9 h-9 rounded-lg flex items-center justify-center
-                    transition-all duration-200
-                    hover:scale-110 hover:text-cyan-500
-                    border
-                    ${isDark
-                      ? 'border-white/10 text-slate-400 hover:border-cyan-400/40 hover:bg-cyan-400/5'
-                      : 'border-slate-200 text-slate-500 hover:border-cyan-700/30 hover:bg-cyan-50'
-                    }
-                  `}
-                >
-                  <Icon className="text-base" />
-                </a>
+              {socials.map(({ Icon, href, label }) => (
+                <MagneticButton key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className={`grid h-10 w-10 place-items-center rounded-full border transition hover:scale-110 hover:text-cyan-300 hover:shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                      isDark ? "border-white/10 text-slate-400 hover:border-cyan-400/40 hover:bg-cyan-400/5" : "border-slate-200 text-slate-500 hover:border-cyan-700/30 hover:bg-cyan-50"
+                    }`}
+                  >
+                    <Icon size={17} />
+                  </a>
+                </MagneticButton>
               ))}
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* ── Divider ── */}
-      <div className={`h-px mx-4 sm:mx-6 lg:mx-8 ${isDark ? 'bg-white/10' : 'bg-slate-200'}`} />
+      <div className={`h-px mx-4 sm:mx-6 lg:mx-8 ${isDark ? "bg-white/10" : "bg-slate-200"}`} />
 
-      {/* ── Bottom bar ── */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-
-          <p className={`text-xs text-center sm:text-left ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
-            © {new Date().getFullYear()}{' '}
-            <span className="text-cyan-500 font-medium">Md Azharuddin</span>
-            {' '}— All Rights Reserved.
+      <div className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <p className="text-center text-xs text-slate-500 sm:text-left">
+            © {new Date().getFullYear()} <span className="font-bold text-cyan-400">Md Azharuddin</span> — All Rights Reserved.
           </p>
+          <p className="text-center text-xs text-slate-500">Built with React, Next.js, Tailwind CSS, and an AI-first product mindset.</p>
+        </div>
+      </div>
 
-          <p className={`text-xs ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-            Built with React, Tailwind CSS, and automation-first thinking
-          </p>
-
-          {/* Scroll to top */}
-          <button
+      <AnimatePresence>
+        {showTop && (
+          <motion.button
             onClick={handleScrollToTop}
             aria-label="Scroll to top"
-            className={`
-              w-9 h-9 rounded-lg flex items-center justify-center
-              bg-cyan-400 hover:bg-cyan-300
-              text-slate-950 shadow-md
-              transition-all duration-300
-              hover:scale-110 hover:-translate-y-0.5 hover:shadow-cyan-500/30 hover:shadow-lg
-              active:scale-95
-              group
-            `}
+            className="fixed bottom-5 right-5 z-[900] grid h-11 w-11 place-items-center rounded-full bg-cyan-300 text-slate-950 shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            initial={{ opacity: 0, y: 20, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.85 }}
+            whileHover={{ y: -3 }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 320, damping: 24 }}
           >
-            <FaArrowUp className="text-sm transition-transform duration-300 group-hover:-translate-y-0.5" />
-          </button>
-
-        </div>
-      </div>
-
+            <ArrowUp size={18} />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </footer>
   );
-};
+}
 
 export default Footer;

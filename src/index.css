@@ -18,10 +18,16 @@
   scroll-behavior: smooth;
 }
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   background: #070A12;
+  cursor: default;
 }
 
 ::selection {
@@ -85,6 +91,30 @@ body {
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+.animated-gradient-text {
+  background: linear-gradient(90deg, #22d3ee, #34d399, #38bdf8, #22d3ee);
+  background-size: 260% 260%;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.motion-safe\:animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 @keyframes shrink-width {

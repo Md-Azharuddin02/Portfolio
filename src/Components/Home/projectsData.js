@@ -1,56 +1,44 @@
-import sports from "../../assets/images/sports.jpg";
-import parallax from "../../assets/images/parallex.png";
 import spotify from "../../assets/images/spotify.jpg";
-import thePranky from "../../assets/images/the_pranky.jpeg";
 import BraidedAI from "../../assets/images/App.Braided.png";
 import OneSpot from "../../assets/images/OneSpot.png";
 
 
 const projects = [
-  // {
-  //   name: "Sports Kart",
-  //   description:
-  //     "This is an online e-commerce web application to buy and sell the sports related products ",
-  //   img: sports,
-  //   url: "",
-  // },
-  // {
-  //   name: "Parallax Website",
-  //   description:
-  //     "Built a parallax website with smooth scrolling effects, layered visuals, and dynamic depth using modern CSS and JavaScript techniques.",
-  //   img: parallax,
-  //   url: "https://md-azharuddin02.github.io/Parelex-website/",
-  // },
   {
     name: "Spotify Clone",
     description:
       "Created a Spotify clone with React, featuring playlists, playback controls, and a sleek UI, mimicking the original's core functionality.",
+    extended:
+      "A responsive music interface focused on playback controls, playlist browsing, and a familiar product feel. The project highlights component structure, visual polish, and fast client-side interactions.",
     img: spotify,
     url: "https://spotifyclone-seven-phi.vercel.app/",
+    repo: "https://github.com/Md-Azharuddin02",
     tech: ["React", "JavaScript", "CSS"],
+    gallery: [spotify],
   },
   {
     name: "Braided AI",
     description:
       "This web application is primarily built as an AI chat application that enables users to interact with an intelligent assistant to get information, solve queries, and perform various tasks efficiently.",
+    extended:
+      "An AI chat product experience with conversational UI, API integration, session-oriented flows, and interaction details designed for practical assistant-style usage.",
     img: BraidedAI,
     url: "https://app.braidedai.com",
-    tech: ["AI Chat", "React", "API"],
+    repo: "https://github.com/Md-Azharuddin02",
+    tech: ["AI Chat", "React", "API", "LLM"],
+    gallery: [BraidedAI],
   },
   {
     name: "OneSpot.tv",
     description: "This web application is built as a video upload platform where users can securely upload and manage videos for clients, making it easy to store, organize, and share video files when needed.",
+    extended:
+      "A client-facing video upload and management platform with secure access, organized media handling, and a clean interface for repeated operational use.",
     img: OneSpot,
     url: "https://onespot.tv/login",
+    repo: "https://github.com/Md-Azharuddin02",
     tech: ["Video", "Cloud", "Security"],
-  },
-  // {
-  //   name: "The Pranky",
-  //   description:
-  //     "This is a web application to read and post jokes according to your choise.",
-  //   img: thePranky,
-  //   url: "",
-  // },
+    gallery: [OneSpot],
+  }
 ];
 
 export default projects;

@@ -5,7 +5,7 @@ import {  FaRobot,  } from "react-icons/fa";
 const STATUS = [
   "Hydrating modern interface",
   "Preparing cloud-ready modules",
-  "Wiring AI automation layer",
+  "Wiring AI Integration layer",
   "Launching portfolio experience",
 ];
 

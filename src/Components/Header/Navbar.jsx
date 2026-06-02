@@ -1,307 +1,167 @@
-import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { BsBrightnessHighFill } from "react-icons/bs";
-import { MdDarkMode, MdCancel } from "react-icons/md";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { ThemeContext } from '../../Store/ThemeContext ';
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Menu, Moon, Sun, X } from "lucide-react";
+import { ThemeContext } from "../../Store/ThemeContext ";
 
-const NAV_ITEMS = ['home', 'skills', 'about', 'automation', 'project', 'contact'];
-const NAV_LABELS = {
-  home: 'Home',
-  skills: 'Skills',
-  about: 'About',
-  automation: 'Automation',
-  project: 'Projects',
-  contact: 'Contact',
-};
-const ID_MAP = {
-  home: ['home', 'hero', 'banner'],
-  about: ['about', 'about-me'],
-  skills: ['skills', 'skill'],
-  automation: ['automation', 'workflow', 'automations'],
-  project: ['project', 'projects', 'portfolio'],
-  contact: ['contact', 'contact-me', 'contactme'],
-};
+const NAV_ITEMS = [
+  { id: "home", label: "Home" },
+  { id: "skills", label: "Skills" },
+  { id: "about", label: "About" },
+  // { id: "ai-integration", label: "AI Integration" },
+  { id: "project", label: "Projects" },
+  { id: "contact", label: "Contact" },
+];
 
 function Navbar() {
   const { isDark, handleTheamChange, active, handleSetActive, isOpen, handleMenuBar } = useContext(ThemeContext);
   const [scrolled, setScrolled] = useState(false);
-  const indicatorRef = useRef(null);
-  const navRef = useRef(null);
-  const linkRefs = useRef({});
+  const sectionIds = useMemo(() => NAV_ITEMS.map((item) => item.id), []);
 
-  const scrollToSection = useCallback((item, e) => {
-    e?.preventDefault();
-
-    // home always scrolls to very top
-    if (item === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      handleSetActive({ target: { name: item } });
-      return;
-    }
-
-    // Try each possible id alias until one is found
-    const candidates = ID_MAP[item] ?? [item];
-    const el = candidates.map((id) => document.getElementById(id)).find(Boolean);
-
-    if (el) {
-      const navHeight = document.querySelector('header')?.offsetHeight ?? 70;
-      const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 8;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-
-    handleSetActive({ target: { name: item } });
-  }, [handleSetActive]);
-
-  // Shrink navbar on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const sections = NAV_ITEMS.map((item) => {
-      const candidates = ID_MAP[item] ?? [item];
-      const element = candidates.map((id) => document.getElementById(id)).find(Boolean);
-      return { item, element };
-    }).filter(({ element }) => element);
-
+    const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
     if (!sections.length) return undefined;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible?.target?.id) {
-          const match = sections.find(({ element }) => element === visible.target);
-          if (match) handleSetActive({ target: { name: match.item } });
-        }
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target?.id) handleSetActive({ target: { name: visible.target.id } });
       },
-      { rootMargin: '-35% 0px -50% 0px', threshold: [0.1, 0.35, 0.6] },
+      { rootMargin: "-35% 0px -50% 0px", threshold: [0.15, 0.35, 0.6] },
     );
 
-    sections.forEach(({ element }) => observer.observe(element));
+    sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [handleSetActive]);
+  }, [handleSetActive, sectionIds]);
 
-  // Slide the active indicator under the correct link
-  useEffect(() => {
-    const el = linkRefs.current[active];
-    const indicator = indicatorRef.current;
-    if (!el || !indicator) return;
-    const { offsetLeft, offsetWidth } = el;
-    indicator.style.left = `${offsetLeft}px`;
-    indicator.style.width = `${offsetWidth}px`;
-  }, [active]);
+  const scrollToSection = (id, event) => {
+    event.preventDefault();
+    const section = document.getElementById(id);
+    if (section) {
+      const top = section.getBoundingClientRect().top + window.scrollY - 74;
+      window.scrollTo({ top, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    handleSetActive({ target: { name: id } });
+    handleMenuBar(false);
+  };
 
   return (
-    <header className="sticky top-0 z-[999] w-full">
+    <motion.header
+      className="sticky top-0 z-[999] w-full"
+      initial={{ y: -24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    >
       <nav
-        className={`
-          relative w-full z-[1000]
-          transition-all duration-300
-          ${scrolled
+        className={`border-b backdrop-blur-md transition-all duration-300 ${
+          scrolled
             ? isDark
-              ? 'bg-[#070A12]/90 shadow-[0_12px_45px_rgba(0,0,0,0.45)] py-2 border-b border-white/10'
-              : 'bg-[#F7F7F2]/90 shadow-[0_12px_45px_rgba(15,23,42,0.08)] py-2 border-b border-slate-900/10'
+              ? "border-white/10 bg-[#070A12]/86 py-2 shadow-[0_18px_60px_rgba(0,0,0,0.32)]"
+              : "border-slate-900/10 bg-[#F7F7F2]/86 py-2 shadow-[0_18px_60px_rgba(15,23,42,0.08)]"
             : isDark
-              ? 'bg-[#070A12]/75 py-4'
-              : 'bg-[#F7F7F2]/75 py-4'
-          }
-          backdrop-blur-xl
-        `}
+              ? "border-white/5 bg-[#070A12]/60 py-4"
+              : "border-slate-900/5 bg-[#F7F7F2]/60 py-4"
+        }`}
       >
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a
+            href="#home"
+            onClick={(event) => scrollToSection("home", event)}
+            className={`text-xl font-black tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${isDark ? "text-white" : "text-slate-950"}`}
+          >
+            Azhar<span className="text-cyan-400">.</span>
+          </a>
 
-            {/* Logo */}
-            <a
-              href="#home"
-              onClick={(e) => scrollToSection('home', e)}
-              className={`
-                text-xl font-black tracking-tight relative z-10
-                transition-colors duration-200
-                ${isDark ? 'text-white' : 'text-gray-900'}
-              `}
-            >
-              Azhar<span className="text-cyan-500">.</span>
-            </a>
-
-            {/* Desktop nav — with sliding underline indicator */}
-            <div ref={navRef} className="hidden md:flex items-center gap-1 relative">
-              {/* Sliding active underline */}
-              <span
-                ref={indicatorRef}
-                className="absolute bottom-0 h-0.5 bg-cyan-400 rounded-full transition-all duration-300 ease-[cubic-bezier(.34,1.56,.64,1)]"
-              />
-
-              {NAV_ITEMS.map((item) => (
-                <a
-                  key={item}
-                  ref={(el) => (linkRefs.current[item] = el)}
-                  href={`#${item}`}
-                  onClick={(e) => scrollToSection(item, e)}
-                  className={`
-                    px-4 py-2 rounded-lg text-sm font-medium
-                    transition-colors duration-200
-                    hover:text-cyan-400
-                    ${active === item
-                      ? 'text-cyan-400'
-                      : isDark ? 'text-gray-300' : 'text-gray-600'
-                    }
-                  `}
-                >
-                  {NAV_LABELS[item]}
-                </a>
-              ))}
-            </div>
-
-            {/* Right side controls */}
-            <div className="flex items-center gap-2">
-
-              {/* Theme toggle */}
-              {!isOpen && (
-                <button
-                  onClick={handleTheamChange}
-                  aria-label="Toggle theme"
-                  className={`
-                  p-2 rounded-lg text-xl
-                  transition-all duration-200
-                  hover:scale-110 active:scale-95
-                  ${isDark
-                      ? 'text-cyan-300 hover:bg-white/10'
-                      : 'text-cyan-700 hover:bg-slate-900/5'
-                    }
-                `}
-                >
-                  {isDark ? <BsBrightnessHighFill /> : <MdDarkMode />}
-                </button>
-              )}
-
-
-              {/* Hamburger — mobile only */}
-              <button
-                onClick={handleMenuBar}
-                aria-label="Toggle menu"
-                aria-expanded={isOpen}
-                className={`
-                  md:hidden p-2 rounded-lg text-xl
-                  transition-all duration-200
-                  hover:scale-110 active:scale-95
-                  ${isDark ? 'text-white hover:bg-white/10' : 'text-gray-900 hover:bg-slate-900/5'}
-                `}
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(event) => scrollToSection(item.id, event)}
+                className={`relative rounded-full px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                  active === item.id ? "text-cyan-300" : isDark ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-950"
+                }`}
               >
-                {isOpen
-                  ? <MdCancel size={22} />
-                  : <RxHamburgerMenu size={22} />
-                }
-              </button>
-            </div>
+                {active === item.id && (
+                  <motion.span layoutId="nav-underline" className="absolute inset-x-3 bottom-1 h-0.5 rounded-full bg-cyan-300" />
+                )}
+                <span className="relative">{item.label}</span>
+              </a>
+            ))}
+          </div>
 
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleTheamChange}
+              aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+              className={`rounded-full p-2 transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                isDark ? "text-cyan-200 hover:bg-white/10" : "text-cyan-700 hover:bg-slate-900/5"
+              }`}
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+            <button
+              onClick={() => handleMenuBar()}
+              aria-label="Toggle navigation menu"
+              aria-expanded={isOpen}
+              className={`rounded-full p-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:hidden ${
+                isDark ? "text-white hover:bg-white/10" : "text-slate-950 hover:bg-slate-900/5"
+              }`}
+            >
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* ── Mobile menu ── */}
-      <div
-        className={`
-          fixed inset-0 md:hidden z-[990]
-          transition-all duration-300
-          ${isOpen ? 'visible' : 'invisible'}
-        `}
-      >
-        {/* Backdrop */}
-        <div
-          onClick={handleMenuBar}
-          className={`
-            absolute inset-0 bg-black/50 backdrop-blur-sm
-            transition-opacity duration-300
-            ${isOpen ? 'opacity-100' : 'opacity-0'}
-          `}
-        />
-
-        {/* Slide-in panel */}
-        <div className={`
-          absolute top-0 right-0 h-full w-72
-          ${isDark ? 'bg-[#070A12]' : 'bg-[#F7F7F2]'}
-          shadow-2xl flex flex-col
-          transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-        `}>
-
-          {/* Panel header */}
-          <div className={`
-            flex items-center justify-between px-6 py-5 border-b
-            ${isDark ? 'border-gray-800' : 'border-gray-100'}
-          `}>
-            <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Azhar<span className="text-cyan-500">.</span>
-            </span>
-            <button
-              onClick={handleMenuBar}
-              className={`p-1.5 rounded-lg ${isDark ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-500 hover:bg-gray-100'}`}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 z-[998] md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <button className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={() => handleMenuBar(false)} aria-label="Close navigation menu" />
+            <motion.nav
+              className={`absolute inset-x-4 top-20 rounded-2xl border p-4 shadow-2xl ${isDark ? "border-white/10 bg-slate-950" : "border-slate-200 bg-white"}`}
+              initial={{ y: -18, scale: 0.96 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: -12, scale: 0.96 }}
             >
-              <MdCancel size={20} />
-            </button>
-          </div>
-
-          {/* Nav links */}
-          <nav className="flex flex-col px-4 py-4 gap-1">
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item}
-                href={`#${item}`}
-                onClick={(e) => {
-                  scrollToSection(item, e);
-                  handleMenuBar();
-                }}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl
-                  text-base font-medium
-                  transition-all duration-200
-                  ${active === item
-                    ? isDark
-                      ? 'bg-cyan-300/10 text-cyan-300 border-l-2 border-cyan-400'
-                      : 'bg-cyan-50 text-cyan-700 border-l-2 border-cyan-500'
-                    : isDark
-                      ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }
-                `}
-              >
-                {NAV_LABELS[item]}
-                {active === item && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                )}
-              </a>
-            ))}
-          </nav>
-
-          {/* Bottom theme toggle */}
-          <div className={`mt-auto px-6 py-5 border-t ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
-            <button
-              onClick={handleTheamChange}
-              className={`
-                w-full flex items-center justify-between px-4 py-3 rounded-xl
-                text-sm font-medium transition-all duration-200
-                ${isDark
-                  ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                }
-              `}
-            >
-              <span>{isDark ? 'Switch to Light' : 'Switch to Dark'}</span>
-              <span className="text-cyan-500 text-lg">
-                {isDark ? <BsBrightnessHighFill /> : <MdDarkMode />}
-              </span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </header>
+              {NAV_ITEMS.map((item, index) => (
+                <motion.a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={(event) => scrollToSection(item.id, event)}
+                  className={`flex items-center justify-between rounded-xl px-4 py-3 text-base font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                    active === item.id
+                      ? "bg-cyan-300 text-slate-950"
+                      : isDark
+                        ? "text-slate-300 hover:bg-white/10 hover:text-white"
+                        : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                  initial={{ opacity: 0, x: 18 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                >
+                  {item.label}
+                  {active === item.id && <span className="h-2 w-2 rounded-full bg-slate-950" />}
+                </motion.a>
+              ))}
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
 
