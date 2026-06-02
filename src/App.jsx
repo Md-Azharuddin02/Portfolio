@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './Components/ErrorBoundary'
 import Loader from './Components/Home/Loader';
 import PageNotFound from './Components/PageNotFound';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react";
 
 
 // Lazy load components
@@ -21,6 +21,7 @@ function App() {
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
+
         <Analytics />
       </Suspense>
     </ErrorBoundary>
