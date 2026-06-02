@@ -4,9 +4,9 @@ import ErrorBoundary from './Components/ErrorBoundary'
 import Loader from './Components/Home/Loader';
 import PageNotFound from './Components/PageNotFound';
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 
-// Lazy load components
 const Layout = React.lazy(() => import('./Components/Layout/Layout'));
 const Home = React.lazy(() => import('./Pages/Home'));
 
@@ -23,6 +23,7 @@ function App() {
         </Routes>
 
         <Analytics />
+        <SpeedInsights/>
       </Suspense>
     </ErrorBoundary>
   );
