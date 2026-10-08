@@ -5,18 +5,20 @@ import About from '../Components/Home/About';
 import Project from '../Components/Home/Project';
 import Testimonial from '../Components/Home/Testimonial';
 import ContactMe from '../Components/Home/ContactMe';
+import ClosingCTA from '../Components/Home/ClosingCTA';
 
 function Home() {
   return (
     <>
       <HomePageHero />
-      <Skills />
       <About />
+      <Skills />
       <Project />
       <Testimonial />
+      <ClosingCTA />
       <ContactMe />
     </>
   );
 }
 
-export default Home; 
+export default Home;

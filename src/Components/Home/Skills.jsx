@@ -1,76 +1,55 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { ThemeContext } from "../../Store/ThemeContext ";
-import { MarqueeRow } from "../interactive/MarqueeRow";
-import { TiltCard } from "../interactive/TiltCard";
 import { stackCategories, skillRows } from "../../content/skills";
-import { fadeUp, staggerContainer } from "../../lib/motion";
-import { cn } from "../../lib/utils";
+import { EASE_OUT, staggerContainer } from "../../lib/motion";
+import { SectionHeading } from "../ui/SectionHeading";
+
+const toolsFor = (category) => skillRows.find((row) => row.category === category)?.skills ?? [];
+
+const column = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE_OUT } },
+};
 
 function Skills() {
-  const { theme, isDark } = useContext(ThemeContext);
-  const [activeCategory, setActiveCategory] = useState("all");
-
   return (
-    <section id="skills" className={`w-full overflow-hidden ${theme?.themeColor} py-16 sm:py-20`} aria-labelledby="skills-title">
+    <section id="skills" className="w-full bg-canvas py-20 text-ink sm:py-32 lg:py-40" aria-labelledby="skills-title">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
-          className="mx-auto max-w-7xl"
-        >
-          <motion.div variants={fadeUp} className="mb-8 text-center">
-            <h2 id="skills-title" className={`text-3xl font-black sm:text-4xl lg:text-5xl ${isDark ? "text-white" : "text-slate-950"}`}>
-              Full-stack <span className="text-cyan-400">Cloud + AI</span> Stack
-            </h2>
-            <p className={`mt-3 text-sm sm:text-base ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              React interfaces, scalable backend APIs, AWS delivery, and AI integration workflows built for production.
-            </p>
-          </motion.div>
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
+          <SectionHeading id="skills-title" index="02" eyebrow="Capabilities" title="One engineer," accent="the whole stack.">
+            React interfaces, scalable backend APIs, AWS delivery and AI integration — owned end to end, built for production.
+          </SectionHeading>
 
-          <motion.div variants={staggerContainer} className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stackCategories.map(({ Icon, title, copy }) => (
-              <motion.div key={title} variants={fadeUp}>
-                <TiltCard className={`group h-full rounded-2xl border p-5 transition duration-300 ${isDark ? "border-white/10 bg-white/[0.045] hover:border-cyan-300/35" : "border-slate-200 bg-white hover:border-cyan-700/25 hover:shadow-xl"}`}>
-                  <Icon className="mb-4 h-8 w-8 text-cyan-300 transition group-hover:rotate-6 group-hover:scale-110" />
-                  <h3 className={`text-base font-black ${isDark ? "text-white" : "text-slate-950"}`}>{title}</h3>
-                  <p className={`mt-2 text-sm leading-6 ${isDark ? "text-slate-400" : "text-slate-600"}`}>{copy}</p>
-                </TiltCard>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div variants={fadeUp} className="mb-10 flex flex-wrap justify-center gap-2" aria-label="Stack filter">
-            <button
-              onClick={() => setActiveCategory("all")}
-              className={cn(
-                "rounded-full border px-4 py-2 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                activeCategory === "all" ? "border-cyan-300 bg-cyan-300 text-slate-950" : isDark ? "border-white/10 text-slate-300 hover:text-white" : "border-slate-200 text-slate-600 hover:text-slate-950",
-              )}
-            >
-              All
-            </button>
-            {stackCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={cn(
-                  "rounded-full border px-4 py-2 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                  activeCategory === category.id ? "border-cyan-300 bg-cyan-300 text-slate-950" : isDark ? "border-white/10 text-slate-300 hover:text-white" : "border-slate-200 text-slate-600 hover:text-slate-950",
-                )}
+          <motion.div variants={staggerContainer} className="grid border-t border-ink/15 sm:grid-cols-2 lg:grid-cols-4">
+            {stackCategories.map(({ id, Icon, title, copy }, index) => (
+              <motion.article
+                key={id}
+                variants={column}
+                className="group/col relative flex flex-col border-b border-ink/15 py-7 sm:px-6 sm:py-8 sm:[&:nth-child(odd)]:border-r lg:border-r lg:last:border-r-0 lg:first:pl-0"
               >
-                {category.label}
-              </button>
+                {/* Accent rule that draws in on hover */}
+                <span aria-hidden="true" className="absolute left-0 top-[-1px] h-px w-full origin-left scale-x-0 bg-brand transition-transform duration-700 ease-out-expo group-hover/col:scale-x-100" />
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] text-ink-muted">0{index + 1}</span>
+                  <Icon className="h-4 w-4 text-ink-muted transition-colors duration-500 group-hover/col:text-brand" aria-hidden="true" />
+                </div>
+                <h3 className="mt-5 font-display text-2xl font-medium tracking-tight sm:mt-10">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-ink-muted sm:mt-3">{copy}</p>
+                <ul className="mt-5 flex flex-wrap gap-1.5 sm:mt-8 sm:block sm:space-y-0.5" aria-label={`${title} tools`}>
+                  {toolsFor(id).map((tool) => (
+                    <li key={tool.name} className="group/tool flex items-center gap-2 rounded-full border border-ink/15 px-2.5 py-1 text-[13px] text-ink sm:gap-3 sm:rounded-none sm:border-0 sm:px-0 sm:py-1.5 sm:text-[15px]">
+                      <tool.Icon
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5 shrink-0 text-ink-muted transition-colors duration-300 group-hover/tool:text-[var(--tool)] sm:h-4 sm:w-4"
+                        style={{ "--tool": tool.color }}
+                      />
+                      <span className="transition-transform duration-500 ease-out-expo group-hover/tool:translate-x-1">{tool.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.article>
             ))}
           </motion.div>
-
-          <div className="flex flex-col gap-8 sm:gap-10">
-            {skillRows.map((row) => (
-              <MarqueeRow key={row.label} isDark={isDark} activeCategory={activeCategory} {...row} />
-            ))}
-          </div>
         </motion.div>
       </div>
     </section>

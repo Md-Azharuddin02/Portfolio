@@ -7,8 +7,8 @@
     <meta name="description" content="Md Azharuddin - Full Stack Developer Portfolio. Experienced in React, Node.js, and modern web technologies." />
     <meta name="keywords" content="Full Stack Developer, React Developer, Web Development, Portfolio" />
     <meta name="author" content="Md Azharuddin" />
-    <meta name="theme-color" content="#4BC9EC" />
-    
+    <meta name="theme-color" content="#0D0D0C" />
+
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content="Md Azharuddin - Full Stack Developer" />
     <meta property="og:description" content="Full Stack Developer specializing in modern web technologies" />
@@ -19,10 +19,143 @@
     <!-- Preload critical assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&family=Space+Grotesk:wght@300..700&display=swap"
+    />
+
+    <!-- Apply the saved/system theme before first paint to avoid a flash of the wrong theme -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("portfolio-theme");
+          var dark = saved ? saved === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (e) {}
+      })();
+    </script>
+
+    <!--
+      Boot screen. Inline so it paints before any JS/CSS bundle arrives. It uses the page's own
+      background colour, so when it fades the WebGL name sequence starts on the same canvas.
+    -->
+    <style>
+      #preloader {
+        --pl-bg: #f1efe9; --pl-fg: #121211; --pl-muted: #5e5c57; --pl-line: rgba(18,18,17,.15); --pl-accent: #c2410c;
+        position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; justify-content: space-between;
+        padding: 24px 16px; background: var(--pl-bg); color: var(--pl-fg);
+        font: 11px/1.4 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase;
+        transition: opacity .7s cubic-bezier(.16,1,.3,1) .25s, visibility 0s linear 1s;
+      }
+      html.dark #preloader { --pl-bg: #0d0d0c; --pl-fg: #eceae3; --pl-muted: #8f8d86; --pl-line: rgba(236,234,227,.15); --pl-accent: #ff6a35; }
+      @media (min-width: 640px) { #preloader { padding: 24px 24px; } }
+      @media (min-width: 1024px) { #preloader { padding: 24px 32px; } }
+      html:has(#preloader:not(.pl-exit)) { overflow: hidden; }
+      .pl-row { display: flex; justify-content: space-between; color: var(--pl-muted); }
+      .pl-bottom { display: grid; gap: 28px; }
+      .pl-meta { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+      .pl-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; color: var(--pl-muted); }
+      .pl-log li { display: flex; gap: 10px; white-space: nowrap; }
+      .pl-log li::before { content: "›"; color: var(--pl-muted); }
+      .pl-log .pl-status { min-width: 2.5em; }
+      .pl-log .pl-status::after { content: "···"; animation: pl-blink 1s steps(2) infinite; }
+      .pl-log li.ok { color: var(--pl-fg); }
+      .pl-log li.ok .pl-status::after { content: "ok"; color: var(--pl-accent); animation: none; }
+      .pl-count {
+        font: 500 clamp(5.5rem, 19vw, 15rem)/.8 "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+        letter-spacing: -.06em; text-transform: none; font-variant-numeric: tabular-nums;
+        overflow: hidden; padding-bottom: .04em; display: flex; align-items: flex-start;
+      }
+      .pl-count span { display: block; transition: transform .7s cubic-bezier(.76,0,.24,1); }
+      .pl-count small { font-size: .22em; letter-spacing: 0; margin-left: .12em; margin-top: .25em; color: var(--pl-muted); }
+      .pl-bar { position: relative; height: 1px; background: var(--pl-line); overflow: hidden; }
+      .pl-bar span { position: absolute; inset: 0; background: var(--pl-fg); transform-origin: left; transform: scaleX(0); }
+      .pl-row, .pl-log { transition: opacity .45s ease, transform .6s cubic-bezier(.16,1,.3,1); }
+      #preloader.pl-exit { opacity: 0; visibility: hidden; pointer-events: none; }
+      #preloader.pl-exit .pl-count span { transform: translateY(-105%); }
+      #preloader.pl-exit .pl-row, #preloader.pl-exit .pl-log { opacity: 0; transform: translateY(-10px); }
+      @keyframes pl-blink { 50% { opacity: .25; } }
+      @media (max-width: 639px) { .pl-meta { flex-direction: column-reverse; align-items: flex-start; } }
+      @media (prefers-reduced-motion: reduce) { #preloader, #preloader * { transition: none !important; animation: none !important; } }
+    </style>
     <title>Md Azharuddin - Full Stack Developer</title>
   </head>
   <body>
+    <div id="preloader" aria-hidden="true">
+      <div class="pl-row"><span>Md Azharuddin</span><span>Portfolio © <span id="pl-year"></span></span></div>
+      <div class="pl-bottom">
+        <div class="pl-meta">
+          <ol class="pl-log">
+            <li data-step="fonts">Resolving typefaces<span class="pl-status"></span></li>
+            <li data-step="app">Mounting interface<span class="pl-status"></span></li>
+            <li data-step="scene">Compiling WebGL scene<span class="pl-status"></span></li>
+          </ol>
+          <div class="pl-count"><span>000</span><small>%</small></div>
+        </div>
+        <div class="pl-bar"><span></span></div>
+      </div>
+    </div>
+    <script>
+      /*
+       * Boot progress is driven by real readiness signals, not a timer:
+       *   fonts  → document.fonts.ready
+       *   app    → window.__preloader.mark("app")   (React layout mounted)
+       *   scene  → window.__preloader.mark("scene") (WebGL geometry built, or WebGL unavailable)
+       * A time ramp only smooths the number; a 7s failsafe guarantees the page always opens.
+       */
+      (function () {
+        var el = document.getElementById("preloader");
+        if (!el) return;
+        document.getElementById("pl-year").textContent = new Date().getFullYear();
+        var count = el.querySelector(".pl-count span");
+        var bar = el.querySelector(".pl-bar span");
+        var steps = { fonts: false, app: false, scene: false };
+        var t0 = performance.now();
+        var shown = 0;
+        var last = t0;
+        var finished = false;
+        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function mark(step) {
+          if (steps[step]) return;
+          steps[step] = true;
+          var li = el.querySelector('[data-step="' + step + '"]');
+          if (li) li.classList.add("ok");
+        }
+        function finish() {
+          if (finished) return;
+          finished = true;
+          count.textContent = "100";
+          bar.style.transform = "scaleX(1)";
+          window.__preloaderDoneAt = performance.now();
+          window.dispatchEvent(new Event("preloader:done"));
+          requestAnimationFrame(function () { el.classList.add("pl-exit"); });
+          setTimeout(function () { el.remove(); }, 1200);
+        }
+        window.__preloader = { mark: mark, finish: finish };
+
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { mark("fonts"); });
+        else mark("fonts");
+
+        function tick(now) {
+          if (finished) return;
+          var done = (steps.fonts ? 1 : 0) + (steps.app ? 1 : 0) + (steps.scene ? 1 : 0);
+          var ramp = Math.min((now - t0) / 900, 1) * 100;
+          var goal = Math.min((done / 3) * 100, ramp);
+          // Frame-rate independent easing: throttled/slow frames still converge on time.
+          var dt = Math.min((now - last) / 1000, 0.5);
+          last = now;
+          shown = reduced ? goal : shown + (goal - shown) * (1 - Math.exp(-dt * 9));
+          if (goal - shown < 0.6) shown = goal;
+          count.textContent = String(Math.round(shown)).padStart(3, "0");
+          bar.style.transform = "scaleX(" + shown / 100 + ")";
+          if (done === 3 && shown > 99.4) { finish(); return; }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        setTimeout(function () { mark("fonts"); mark("app"); mark("scene"); finish(); }, 7000);
+      })();
+    </script>
     <div id="root"></div>
     <noscript>You need to enable JavaScript to run this application.</noscript>
     <script type="module" src="/src/main.jsx"></script>

@@ -1,13 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
-import { Send, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, Check, Copy, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { ThemeContext } from "../../Store/ThemeContext ";
 import { MagneticButton } from "../interactive/MagneticButton";
+import { LocalTime } from "../interactive/LocalTime";
 import { Button } from "../ui/Button";
 import { fadeUp, staggerContainer } from "../../lib/motion";
+import { SectionHeading } from "../ui/SectionHeading";
+
+const EMAIL = "mdazharuddin02@gmail.com";
 
 const schema = z.object({
   name: z.string().min(2, "Enter your name"),
@@ -17,94 +20,159 @@ const schema = z.object({
   body: z.string().min(10, "Tell me a little more"),
 });
 
-function Field({ label, error, as = "input", isDark, ...props }) {
+const SOCIALS = [
+  { label: "GitHub", href: "https://github.com/Md-Azharuddin02", handle: "@Md-Azharuddin02" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/mdazharuddin02/", handle: "in/mdazharuddin02" },
+  { label: "X / Twitter", href: "https://x.com/Md_Azharuddin02", handle: "@Md_Azharuddin02" },
+];
+
+// Underlined editorial field with a persistent visible label (never placeholder-only).
+const Field = React.forwardRef(function Field({ label, error, as = "input", name, className = "", ...props }, ref) {
   const Comp = as;
+  const errorId = `${name}-error`;
   return (
-    <label className="group relative block">
+    <label className={`group block ${className}`}>
+      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-muted transition-colors group-focus-within:text-ink">{label}</span>
       <Comp
         {...props}
-        placeholder=" "
-        className={`peer w-full rounded-xl border px-4 pb-2.5 pt-5 text-sm transition focus:outline-none focus:ring-2 focus:ring-cyan-400/35 ${
-          isDark ? "border-white/10 bg-white/[0.045] text-white hover:border-cyan-300/30" : "border-slate-200 bg-white text-slate-950 hover:border-cyan-700/25"
-        } ${error ? "border-rose-400 focus:ring-rose-400/30" : ""}`}
+        ref={ref}
+        name={name}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
+        className={`mt-2 w-full resize-none border-b bg-transparent pb-3 text-lg text-ink transition-colors duration-300 placeholder:text-ink-muted/60 focus:outline-none ${
+          error ? "border-red-500" : "border-ink/20 hover:border-ink/50 focus:border-ink"
+        }`}
       />
-      <span className={`pointer-events-none absolute left-4 top-3 text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs ${isDark ? "text-slate-400 peer-focus:text-cyan-200" : "text-slate-500 peer-focus:text-cyan-700"}`}>
-        {label}
-      </span>
-      {error && <span className="mt-1 block text-xs font-semibold text-rose-400">{error.message}</span>}
+      {error && (
+        <span id={errorId} role="alert" className="mt-2 block text-xs text-red-600 dark:text-red-400">
+          {error.message}
+        </span>
+      )}
     </label>
   );
-}
+});
 
 function ContactMe() {
-  const { theme, isDark } = useContext(ThemeContext);
-  const [showToast, setShowToast] = useState(false);
+  const [toast, setToast] = useState("");
+  const [copied, setCopied] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const id = window.setTimeout(() => setToast(""), 3200);
+    return () => window.clearTimeout(id);
+  }, [toast]);
 
   const onSubmit = (data) => {
     const subject = encodeURIComponent(data.subject || "Portfolio inquiry");
     const body = encodeURIComponent(`Hi Azhar,\n\n${data.body}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}`);
-    window.location.href = `mailto:mdazharuddin02@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
     reset();
-    setShowToast(true);
-    window.setTimeout(() => setShowToast(false), 3000);
+    setToast("Email draft prepared — your mail app will open with the details.");
+  };
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setToast(EMAIL);
+    }
   };
 
   return (
-    <section id="contact" className={`relative overflow-hidden ${theme?.themeColor} py-16 sm:py-20`} aria-labelledby="contact-title">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(34,211,238,.14),transparent_28rem),radial-gradient(circle_at_80%_80%,rgba(52,211,153,.12),transparent_26rem)]" />
+    <section id="contact" className="relative bg-canvas py-20 text-ink sm:py-32 lg:py-40" aria-labelledby="contact-title">
       <AnimatePresence>
-        {showToast && (
-          <motion.div
-            className="fixed left-1/2 top-20 z-[1300] w-[90vw] max-w-sm -translate-x-1/2"
-            initial={{ opacity: 0, y: -16 }}
+        {toast && (
+          <motion.p
+            role="status"
+            className="fixed bottom-6 left-1/2 z-[1300] w-[90vw] max-w-md -translate-x-1/2 rounded-full bg-ink px-5 py-3 text-center text-sm text-canvas"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            aria-live="polite"
+            exit={{ opacity: 0, y: 12 }}
           >
-            <div className={`flex items-center gap-3 rounded-2xl border px-5 py-4 shadow-xl ${isDark ? "border-white/10 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"}`}>
-              <CheckCircle2 className="text-emerald-400" />
-              <div>
-                <p className="text-sm font-black">Email draft prepared</p>
-                <p className={`mt-0.5 text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>Your mail app will open with the details.</p>
-              </div>
-            </div>
-          </motion.div>
+            {toast}
+          </motion.p>
         )}
       </AnimatePresence>
 
       <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
-          <motion.div variants={fadeUp} className="mb-8 text-center">
-            <h2 id="contact-title" className={`text-3xl font-black sm:text-4xl lg:text-5xl ${isDark ? "text-white" : "text-slate-950"}`}>
-              Start a <span className="text-cyan-400">Project</span>
-            </h2>
-            <p className={`mt-3 text-sm sm:text-base ${isDark ? "text-slate-300" : "text-slate-600"}`}>Have a product concept or AI feature in mind? Share the details and let's ship it.</p>
-          </motion.div>
+          <SectionHeading id="contact-title" index="05" eyebrow="Contact" title="Have an idea?" accent="Let's build it." />
 
-          <motion.form
-            variants={fadeUp}
-            onSubmit={handleSubmit(onSubmit)}
-            className={`mx-auto max-w-2xl rounded-2xl border p-5 shadow-[0_24px_90px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-8 ${isDark ? "border-white/10 bg-white/[0.045]" : "border-slate-200 bg-white/80"}`}
-            noValidate
-          >
-            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Full Name" isDark={isDark} error={errors.name} {...register("name")} />
-              <Field label="Email Address" isDark={isDark} error={errors.email} type="email" {...register("email")} />
-            </div>
-            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Mobile Number" isDark={isDark} error={errors.phone} type="tel" {...register("phone")} />
-              <Field label="Email Subject" isDark={isDark} error={errors.subject} {...register("subject")} />
-            </div>
-            <Field label="Your Message" as="textarea" rows={5} isDark={isDark} error={errors.body} {...register("body")} />
-            <div className="mt-6 flex justify-center">
-              <MagneticButton>
-                <Button type="submit" className="motion-safe:active:scale-95">
-                  Prepare Email <Send size={16} />
-                </Button>
-              </MagneticButton>
-            </div>
-          </motion.form>
+          <div className="grid grid-cols-12 gap-x-6 gap-y-12 sm:gap-y-16">
+            <motion.div variants={fadeUp} className="col-span-12 lg:col-span-5">
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-muted">Write to me</p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <a
+                  href={`mailto:${EMAIL}`}
+                  data-cursor-label="Email"
+                  className="group font-display text-[clamp(1.4rem,2.4vw,2.25rem)] font-medium tracking-[-0.02em] text-ink [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                >
+                  <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-700 ease-out-expo group-hover:bg-[length:0%_1px]">
+                    {EMAIL}
+                  </span>
+                </a>
+                <button
+                  type="button"
+                  onClick={copyEmail}
+                  aria-label={copied ? "Email copied" : "Copy email address"}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-ink/20 text-ink transition-colors hover:border-ink hover:bg-ink hover:text-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span key={copied ? "ok" : "copy"} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} transition={{ duration: 0.2 }}>
+                      {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
+                    </motion.span>
+                  </AnimatePresence>
+                </button>
+              </div>
+              <p className="mt-4 text-sm text-ink-muted">
+                My local time is <LocalTime showSeconds={false} className="text-ink" />.
+              </p>
+
+              <ul className="mt-14 hidden border-t border-ink/15 sm:block">
+                {SOCIALS.map((s) => (
+                  <li key={s.label} className="border-b border-ink/15">
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center justify-between py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                    >
+                      <span className="text-[15px] text-ink">{s.label}</span>
+                      <span className="flex items-center gap-3 font-mono text-[11px] text-ink-muted transition-colors group-hover:text-ink">
+                        {s.handle}
+                        <ArrowUpRight size={15} aria-hidden="true" className="transition-transform duration-500 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.form
+              id="contact-form"
+              variants={fadeUp}
+              onSubmit={handleSubmit(onSubmit)}
+              className="col-span-12 grid grid-cols-2 gap-x-8 gap-y-7 sm:gap-y-10 lg:col-span-6 lg:col-start-7"
+              noValidate
+            >
+              <Field label="Name" autoComplete="name" error={errors.name} className="col-span-2 sm:col-span-1" {...register("name")} />
+              <Field label="Email" type="email" autoComplete="email" error={errors.email} className="col-span-2 sm:col-span-1" {...register("email")} />
+              <Field label="Phone" type="tel" autoComplete="tel" error={errors.phone} className="col-span-2 sm:col-span-1" {...register("phone")} />
+              <Field label="Subject" error={errors.subject} className="col-span-2 sm:col-span-1" {...register("subject")} />
+              <Field label="Project details" as="textarea" rows={3} error={errors.body} className="col-span-2" {...register("body")} />
+              <div className="col-span-2 flex flex-wrap items-center justify-between gap-4">
+                <p className="max-w-[16rem] text-xs leading-relaxed text-ink-muted">Opens your mail app with everything pre-filled — nothing is stored on a server.</p>
+                <MagneticButton>
+                  <Button type="submit" data-cursor-label="Send">
+                    Send message <Send size={15} aria-hidden="true" />
+                  </Button>
+                </MagneticButton>
+              </div>
+            </motion.form>
+          </div>
         </motion.div>
       </div>
     </section>

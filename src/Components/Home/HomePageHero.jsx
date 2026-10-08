@@ -1,164 +1,218 @@
-import React, { useContext, useRef } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, Download, Sparkles } from "lucide-react";
-import { FaAws, FaGithub, FaLinkedin } from "react-icons/fa";
-import { SiFastapi, SiOpenai, SiReact } from "react-icons/si";
-import { Cloudinary } from "@cloudinary/url-gen";
-import { AdvancedImage } from "@cloudinary/react";
-import { fill } from "@cloudinary/url-gen/actions/resize";
-import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
-import { face } from "@cloudinary/url-gen/qualifiers/focusOn";
+import React, { Suspense, lazy, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { ThemeContext } from "../../Store/ThemeContext ";
 import resume from "../../assets/MdAzharuddinFullStackResume.pdf";
-import { AnimatedText } from "../interactive/AnimatedText";
 import { MagneticButton } from "../interactive/MagneticButton";
-import { TiltCard } from "../interactive/TiltCard";
-import { Badge } from "../ui/Badge";
+import { LocalTime } from "../interactive/LocalTime";
+import { ScrambleText } from "../interactive/ScrambleText";
 import { Button } from "../ui/Button";
-import { fadeUp, staggerContainer } from "../../lib/motion";
+import { EASE_OUT } from "../../lib/motion";
+import { usePreloaderDone } from "../../lib/preloader";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 
-const cld = new Cloudinary({ cloud: { cloudName: "dqpkciwvo" } });
-const img = cld.image("Md-Azharuddin").format("auto").quality("auto").resize(fill().width(600).height(750).gravity(focusOn(face())));
+// The WebGL field (~250 kB gz with three.js) loads after first paint.
+const SignalField = lazy(() => import("../three/SignalField"));
 
-const socials = [
-  { Icon: FaLinkedin, label: "LinkedIn", url: "https://www.linkedin.com/in/mdazharuddin02/" },
-  { Icon: FaGithub, label: "GitHub", url: "https://github.com/Md-Azharuddin02" },
+// Each line is a list of [text, isEmphasis] runs.
+const LINES = [
+  [["Full-stack products", false]],
+  [["with cloud scale", false]],
+  [["& ", false], ["AI intelligence.", true]],
 ];
 
-const metrics = [
-  { value: "2+", label: "Years building production systems", accent: "from-cyan-300 to-sky-400" },
-  { value: "AI", label: "LLM-first product mindset", accent: "from-emerald-300 to-teal-400" },
-  { value: "API", label: "Full-stack delivery depth", accent: "from-violet-300 to-cyan-300" },
-];
-
-
-function HomePageHero() {
-  const { theme, isDark } = useContext(ThemeContext);
-  const bgRef = useRef(null);
-
-  const onBackgroundMove = (event) => {
-    if (!bgRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const x = (event.clientX / window.innerWidth) * 100;
-    const y = (event.clientY / window.innerHeight) * 100;
-    bgRef.current.style.setProperty("--mx", `${x}%`);
-    bgRef.current.style.setProperty("--my", `${y}%`);
-  };
-
+function RevealLine({ runs, lineIndex, revealed }) {
   return (
-    <section
-      id="home"
-      onPointerMove={onBackgroundMove}
-      className={`relative flex min-h-[calc(100vh-72px)] items-center overflow-hidden ${theme?.themeColor}`}
-      aria-labelledby="hero-title"
-    >
-      <div
-        ref={bgRef}
-        className="pointer-events-none absolute inset-0 [--mx:50%] [--my:50%]"
-        style={{
-          background:
-            "radial-gradient(circle at var(--mx) var(--my), rgba(34,211,238,.16), transparent 18rem), linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px)",
-          backgroundSize: "auto, 58px 58px, 58px 58px",
-          maskImage: "radial-gradient(ellipse at center, black 35%, transparent 82%)",
-        }}
-      />
-
-      <div className="relative w-full py-12 sm:py-16 lg:py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="show"
-          >
-            <div className="space-y-6 text-center lg:text-left">
-              <motion.div variants={fadeUp}>
-                <Badge className="mx-auto lg:mx-0">
-                  <Sparkles className="h-4 w-4" />
-                  Experienced Full-Stack Developer
-                </Badge>
-              </motion.div>
-
-              <h1 id="hero-title" className={`font-display text-4xl font-black leading-[0.98] tracking-tight sm:text-5xl lg:text-[4.5rem] xl:text-[5rem] ${isDark ? "text-white" : "text-slate-950"}`}>
-                <AnimatedText text="Full-stack products with cloud scale and AI intelligence." highlight={["cloud", "AI"]} />
-              </h1>
-
-              <motion.p variants={fadeUp} className={`text-lg font-semibold sm:text-xl ${isDark ? "text-emerald-100" : "text-emerald-700"}`}>
-                Frontend, Backend, AI Integration
-              </motion.p>
-
-              <motion.p variants={fadeUp} className={`mx-auto max-w-2xl text-base leading-relaxed sm:text-lg lg:mx-0 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-                I build polished user experiences backed by scalable APIs, cloud-ready delivery, and LLM-powered product features that feel fast, useful, and reliable.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="grid grid-cols-3 gap-3 sm:gap-4">
-                {metrics.map((metric) => (
-                  <motion.div key={metric.label} variants={fadeUp} className={`relative overflow-hidden rounded-2xl border p-4 ${isDark ? "border-white/10 bg-white/[0.045]" : "border-slate-200 bg-white/80 shadow-sm"}`}>
-                    <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${metric.accent}`} />
-                    <p className={`bg-gradient-to-br ${metric.accent} bg-clip-text text-2xl font-black text-transparent sm:text-3xl`}>{metric.value}</p>
-                    <p className={`mt-1.5 text-[11px] leading-4 sm:text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>{metric.label}</p>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-2.5 lg:justify-start center-buttons">
-                {["React / NextJS", "Node / FastAPI", "AWS cloud", "AI integrations"].map((label) => (
-                  <span key={label} className={`rounded-full border px-3.5 py-2 text-xs font-bold ${isDark ? "border-white/10 bg-white/[0.04] text-slate-300" : "border-slate-200 bg-white text-slate-700"}`}>
-                    {label}
+    <span className="block" aria-hidden="true">
+      {runs.map(([text, em]) =>
+        text.split(" ").filter(Boolean).map((word, w) => (
+          <React.Fragment key={`${text}-${w}`}>
+            <span className="inline-block overflow-hidden pb-[0.12em] align-bottom">
+              <motion.span
+                className={`inline-block ${em ? "font-serif font-normal italic tracking-[-0.02em] text-brand" : ""}`}
+                initial={{ y: "135%" }}
+                animate={{ y: revealed ? "0%" : "135%" }}
+                transition={{ duration: 1.2, ease: EASE_OUT, delay: 0.25 + lineIndex * 0.1 + w * 0.04 }}
+              >
+                {Array.from(word).map((char, c) => (
+                  <span key={c} data-char className="inline-block">
+                    {char}
                   </span>
                 ))}
-              </motion.div>
+              </motion.span>
+            </span>{" "}
+          </React.Fragment>
+        )),
+      )}
+    </span>
+  );
+}
 
-              <motion.div variants={fadeUp} className="flex flex-col justify-center gap-3 pt-2 sm:flex-row lg:justify-start">
-                <MagneticButton>
-                  <Button as="a" href="#project">
-                    View Work <ArrowRight size={17} />
-                  </Button>
-                </MagneticButton>
-                <MagneticButton>
-                  <Button as="a" href={resume} download variant="secondary" className={isDark ? "" : "border-slate-300 bg-white text-slate-950"}>
-                    <Download size={17} /> Download CV
-                  </Button>
-                </MagneticButton>
-              </motion.div>
+// Entrance for supporting copy; `revealed` comes from the WebGL name sequence.
+const fadeIn = (delay, revealed = true) => ({
+  initial: { opacity: 0, y: 14 },
+  animate: revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 },
+  transition: { duration: 1, ease: EASE_OUT, delay },
+});
+
+const META = [
+  { label: "Role", value: "Full-stack developer" },
+  { label: "Focus", value: "Frontend · Backend · AI" },
+  { label: "Status", value: "Open to new projects", live: true },
+];
+
+/**
+ * Letters swell toward the cursor using Space Grotesk's variable weight axis.
+ * Fine pointers on wide screens only; each glyph eases toward its target weight per frame.
+ */
+function useProximityWeight(ref, enabled) {
+  useEffect(() => {
+    const root = ref.current;
+    if (!root || !enabled) return undefined;
+    const media = window.matchMedia("(pointer: fine) and (min-width: 1024px)");
+    if (!media.matches) return undefined;
+    const chars = Array.from(root.querySelectorAll("[data-char]")).filter((el) => !el.closest(".font-serif"));
+    const weights = chars.map(() => 500);
+    const pointer = { x: -9999, y: -9999 };
+    let frame = 0;
+    let idleFrames = 0;
+    const RADIUS = 220;
+
+    const tick = () => {
+      let moving = false;
+      chars.forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        const d = Math.hypot(pointer.x - (r.left + r.width / 2), pointer.y - (r.top + r.height / 2));
+        const target = 500 + 200 * Math.max(0, 1 - d / RADIUS) ** 2;
+        const next = weights[i] + (target - weights[i]) * 0.18;
+        if (Math.abs(next - weights[i]) > 0.5) moving = true;
+        weights[i] = next;
+        el.style.fontVariationSettings = `"wght" ${next.toFixed(0)}`;
+      });
+      // Stop the loop once everything has settled; restart on the next pointer move.
+      idleFrames = moving ? 0 : idleFrames + 1;
+      frame = idleFrames > 10 ? 0 : requestAnimationFrame(tick);
+    };
+    const onMove = (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+    const onLeave = () => {
+      pointer.x = -9999;
+      pointer.y = -9999;
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("pointerleave", onLeave);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerleave", onLeave);
+      cancelAnimationFrame(frame);
+      chars.forEach((el) => (el.style.fontVariationSettings = ""));
+    };
+  }, [ref, enabled]);
+}
+
+function HomePageHero() {
+  const { isDark } = useContext(ThemeContext);
+  const reduced = useReducedMotion();
+  const { scrollY } = useScroll();
+  const headlineY = useTransform(scrollY, [0, 800], [0, -140]);
+  const fade = useTransform(scrollY, [0, 600], [1, 0]);
+  const headlineRef = useRef(null);
+  // The headline waits for the dot-name to collapse into the terrain (see SignalField).
+  const booted = usePreloaderDone();
+  const [revealed, setRevealed] = useState(false);
+  const onReveal = useCallback(() => setRevealed(true), []);
+  useEffect(() => {
+    if (!booted) return undefined;
+    // Never strand the visitor: reveal anyway if WebGL is slow, blocked or unsupported.
+    const id = window.setTimeout(onReveal, reduced ? 0 : 5000);
+    return () => window.clearTimeout(id);
+  }, [booted, onReveal, reduced]);
+  useProximityWeight(headlineRef, !reduced && revealed);
+
+  return (
+    <section id="home" className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-canvas text-ink" aria-labelledby="hero-title">
+      <div className="absolute inset-x-0 bottom-0 top-[38%] -z-10 sm:top-[30%]">
+        <Suspense fallback={null}>
+          <SignalField isDark={isDark} reducedMotion={reduced} onReveal={onReveal} />
+        </Suspense>
+        {/* Blend the field into the page edge */}
+        <div className={`pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-canvas to-transparent transition-opacity duration-1000 ${revealed ? "opacity-100" : "opacity-0"}`} />
+        <div className={`pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-canvas via-canvas/70 to-transparent transition-opacity duration-1000 ${revealed ? "opacity-100" : "opacity-0"}`} />
+      </div>
+
+      <div className="container relative mx-auto flex flex-1 flex-col px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-8">
+        <motion.dl {...fadeIn(0.1, booted)} className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-ink/15 pt-4 font-mono text-[11px] uppercase tracking-[0.14em] sm:grid-cols-4">
+          {META.map((item) => (
+            <div key={item.label}>
+              <dt className="text-ink-muted">{item.label}</dt>
+              <dd className="mt-1 flex items-center gap-2 text-ink">
+                {item.live && (
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-fill opacity-70" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand-fill" />
+                  </span>
+                )}
+                <ScrambleText text={item.value} active={booted} delay={0.25} />
+              </dd>
             </div>
+          ))}
+          <div>
+            <dt className="text-ink-muted">Local time</dt>
+            <dd className="mt-1 text-ink">
+              <LocalTime />
+            </dd>
+          </div>
+        </motion.dl>
 
-            <motion.div variants={fadeUp} className="relative mt-6 lg:mt-0">
-              <TiltCard max={8} className="relative mx-auto max-w-[340px] sm:max-w-[410px] lg:max-w-[460px]">
-                <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-cyan-400/25 via-transparent to-emerald-400/25" />
-                <div className={`relative rounded-[2rem] border p-3  ${isDark ? "border-white/10 bg-white/[0.06] shadow-2xl shadow-cyan-500/10" : "border-slate-200 bg-white/80 shadow-2xl shadow-slate-900/15"}`}>
-                  <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className={`absolute -left-3 top-1/3 z-20 hidden items-center gap-2 rounded-full border px-3 py-2 shadow-lg  sm:flex ${isDark ? "border-white/10 bg-slate-950/85 text-cyan-200" : "border-slate-200 bg-white/95 text-cyan-700"}`}>
-                    <SiReact />
-                    <span className="text-xs font-bold">React</span>
-                  </motion.div>
-                  <motion.div animate={{ y: [0, 12, 0] }} transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }} className={`absolute -right-2 bottom-1/3 z-20 hidden items-center gap-2 rounded-full border px-3 py-2 shadow-lg  sm:flex ${isDark ? "border-white/10 bg-slate-950/85 text-orange-300" : "border-slate-200 bg-white/95 text-orange-600"}`}>
-                    <FaAws />
-                    <span className="text-xs font-bold">AWS</span>
-                  </motion.div>
-                  <div className={`absolute -right-3 -top-3 z-20 rounded-2xl border px-4 py-3 text-left shadow-xl  sm:-right-5 sm:-top-5 ${isDark ? "border-white/10 bg-slate-950/90" : "border-slate-200 bg-white/95"}`}>
-                    <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Status</p>
-                    <p className={`mt-1 flex items-center gap-1.5 text-sm font-black ${isDark ? "text-emerald-200" : "text-emerald-700"}`}>
-                      <span className="relative flex h-2 w-2">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                      </span>
-                      Available for projects
-                    </p>
-                  </div>
-                  <div className="group relative overflow-hidden rounded-[1.5rem]">
-                    <AdvancedImage cldImg={img} className="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                    <div className={`absolute inset-0 ${isDark ? "bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent" : "bg-gradient-to-t from-white/70 via-white/5 to-transparent"}`} />
-                    <div className="absolute inset-x-0 bottom-0 p-4">
-                      <div className={`rounded-2xl border p-4 ${isDark ? "border-white/10 bg-slate-950/75" : "border-white/70 bg-white/85 shadow-lg"}`}>
-                        <p className={`text-sm font-black ${isDark ? "text-white" : "text-slate-950"}`}>Frontend precision with backend depth.</p>
-                        <p className={`mt-1.5 text-xs leading-5 ${isDark ? "text-slate-300" : "text-slate-600"}`}>Modern UI, robust APIs, AI Integration, and performance-minded implementation.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TiltCard>
-            </motion.div>
+        <motion.h1
+          ref={headlineRef}
+          id="hero-title"
+          aria-label="Full-stack products with cloud scale and AI intelligence."
+          style={reduced ? undefined : { y: headlineY }}
+          className="mt-14 font-display text-[clamp(2.75rem,8.6vw,9rem)] font-medium leading-[0.92] tracking-[-0.045em] sm:mt-20"
+        >
+          {LINES.map((runs, index) => (
+            <RevealLine key={index} runs={runs} lineIndex={index} revealed={revealed} />
+          ))}
+        </motion.h1>
+
+        <motion.div style={reduced ? undefined : { opacity: fade }} className="mt-auto grid grid-cols-12 items-end gap-6 pt-12">
+          <motion.p {...fadeIn(0.75, revealed)} className="col-span-12 max-w-md text-base leading-relaxed text-ink-muted md:col-span-5">
+            I design and ship polished interfaces backed by scalable APIs, cloud-ready delivery and LLM-powered features — the kind of software that feels fast, useful and reliable.
+          </motion.p>
+
+          <motion.div {...fadeIn(0.85, revealed)} className="col-span-12 flex flex-wrap gap-3 md:col-span-5">
+            <MagneticButton>
+              <Button as="a" href="#project" data-cursor-label="Work">
+                Selected work <ArrowDown size={16} aria-hidden="true" />
+              </Button>
+            </MagneticButton>
+            <MagneticButton>
+              <Button as="a" href={resume} download variant="secondary">
+                Résumé <ArrowUpRight size={16} aria-hidden="true" />
+              </Button>
+            </MagneticButton>
           </motion.div>
-        </div>
+
+          <motion.a
+            {...fadeIn(0.95, revealed)}
+            href="#about"
+            className="col-span-2 hidden items-center justify-end gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted transition-colors hover:text-ink md:flex"
+          >
+            Scroll
+            <span className="relative h-10 w-px overflow-hidden bg-ink/15">
+              <motion.span
+                className="absolute inset-x-0 top-0 h-1/2 bg-ink"
+                animate={{ y: ["-100%", "200%"] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </span>
+          </motion.a>
+        </motion.div>
       </div>
     </section>
   );

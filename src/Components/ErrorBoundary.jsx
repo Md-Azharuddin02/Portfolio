@@ -1,43 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-function ErrorBoundary({ children }) {
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    const errorHandler = (error) => {
-      console.error('Error caught by error boundary:', error);
-      setHasError(true);
+/**
+ * Real React error boundary: only a crash while *rendering* replaces the page.
+ * Stray async errors (an aborted view transition, a blocked analytics script, a failed fetch)
+ * are logged but never take the whole site down.
+ */
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+    this.onAsyncError = (event) => {
+      console.error('Unhandled async error (page kept alive):', event.reason ?? event.error ?? event);
     };
+  }
 
-    window.addEventListener('error', errorHandler);
-    window.addEventListener('unhandledrejection', errorHandler);
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
 
-    return () => {
-      window.removeEventListener('error', errorHandler);
-      window.removeEventListener('unhandledrejection', errorHandler);
-    };
-  }, []);
+  componentDidCatch(error, info) {
+    console.error('Render error caught by boundary:', error, info?.componentStack);
+  }
 
-  if (hasError) {
+  componentDidMount() {
+    window.addEventListener('unhandledrejection', this.onAsyncError);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('unhandledrejection', this.onAsyncError);
+  }
+
+  render() {
+    if (!this.state.hasError) return this.props.children;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg mx-4">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Oops! Something went wrong</h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            We're sorry for the inconvenience. Please try refreshing the page or contact support if the problem persists.
-          </p>
+      <div className="flex min-h-screen items-center justify-center bg-canvas px-4 text-ink">
+        <div className="max-w-md border-t border-ink/15 pt-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">Error</p>
+          <h1 className="mt-4 font-display text-4xl font-medium tracking-[-0.03em]">
+            Something broke <em className="font-serif font-normal italic text-brand">on my end.</em>
+          </h1>
+          <p className="mt-4 text-ink-muted">A refresh usually fixes it. If it doesn&apos;t, email mdazharuddin02@gmail.com.</p>
           <button
+            type="button"
             onClick={() => window.location.reload()}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300"
+            className="mt-8 min-h-[48px] rounded-full bg-ink px-6 text-sm font-medium text-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
           >
-            Refresh Page
+            Refresh page
           </button>
         </div>
       </div>
     );
   }
-
-  return children;
 }
 
-export default ErrorBoundary; 
+export default ErrorBoundary;

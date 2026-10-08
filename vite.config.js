@@ -4,6 +4,9 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)),
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
@@ -29,7 +32,9 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'react-icons'],
+    // Pre-bundle the lazily imported 3D/animation deps so dev never re-optimizes mid-session
+    // (a mid-session re-optimize loads two React copies and throws invalid-hook errors).
+    include: ['react', 'react-dom', 'react-router-dom', 'react-icons', 'three', '@react-three/fiber', 'gsap', 'gsap/ScrollTrigger', '@gsap/react'],
   },
   server: {
     port: 3000,

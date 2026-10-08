@@ -1,253 +1,252 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ExternalLink, Sparkles } from "lucide-react";
-import { ThemeContext } from "../../Store/ThemeContext ";
+import { ArrowUpRight } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import projects from "./projectsData";
-import { Dialog } from "../ui/Dialog";
-import { TiltCard } from "../interactive/TiltCard";
-import { MagneticButton } from "../interactive/MagneticButton";
-import { Button } from "../ui/Button";
-import { fadeUp, staggerContainer } from "../../lib/motion";
+import { CaseStudy, slugify } from "./CaseStudy";
+import { EASE_OUT } from "../../lib/motion";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+// Horizontal layout only where the pinned scroll actually runs.
+const HORIZONTAL =
+  "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
+
+function ProjectCard({ project, index, onOpen }) {
+  return (
+    <article className="project-card group relative w-[84%] shrink-0 snap-start sm:w-[58%] lg:w-[44%] lg:motion-safe:w-[min(58vw,920px)]">
+      <button
+        type="button"
+        onClick={() => onOpen(index)}
+        data-cursor-label="Open"
+        aria-label={`Open case study: ${project.name}`}
+        className="block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
+      >
+        <div
+          data-project-img={index}
+          className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-surface lg:motion-safe:aspect-auto lg:motion-safe:h-[56vh]"
+        >
+          <img
+            src={project.img}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="project-img h-full w-full scale-110 object-cover grayscale-[60%] transition-[transform,filter] duration-[1.2s] ease-out-expo group-hover:scale-[1.14] group-hover:grayscale-0"
+          />
+          <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-canvas text-ink transition-all duration-500 ease-out-expo group-hover:rotate-45 group-hover:bg-brand-fill group-hover:text-on-brand">
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-12 gap-4 border-t border-ink/15 pt-4">
+          <span className="col-span-2 font-mono text-[11px] text-ink-muted">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <div className="col-span-10 sm:col-span-6">
+            <h3 className="font-display text-[clamp(1.75rem,3vw,2.75rem)] font-medium leading-none tracking-[-0.03em] text-ink">
+              <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-700 ease-out-expo group-hover:bg-[length:100%_1px]">
+                {project.name}
+              </span>
+            </h3>
+            <p className="mt-3 line-clamp-2 max-w-md text-sm leading-relaxed text-ink-muted">
+              {project.description}
+            </p>
+          </div>
+          <ul className="col-span-12 flex flex-wrap content-start gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-muted sm:col-span-4 sm:justify-end">
+            {project.tech.map((tech) => (
+              <li key={tech}>{tech}</li>
+            ))}
+          </ul>
+        </div>
+      </button>
+    </article>
+  );
+}
+
+const indexFromHash = () => {
+  const match = window.location.hash.match(/^#work\/([\w-]+)$/);
+  return match ? projects.findIndex((p) => slugify(p.name) === match[1]) : -1;
+};
 
 function Project() {
-  const { theme, isDark } = useContext(ThemeContext);
-  const [selected, setSelected] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null);
+  const openRef = useRef(null);
+  openRef.current = openIndex;
+  const caseStudy = useRef(null);
+  const section = useRef(null);
+  const track = useRef(null);
+
+  // History is the source of truth: opening pushes #work/<slug>, so Back closes the case study
+  // and the URL is shareable (deep link). Closing from the UI goes through history.back().
+  const open = useCallback((index) => {
+    window.history.pushState({ caseStudy: true }, "", `#work/${slugify(projects[index].name)}`);
+    setOpenIndex(index);
+  }, []);
+
+  const requestClose = useCallback(() => {
+    if (window.history.state?.caseStudy) window.history.back();
+    else caseStudy.current?.close();
+  }, []);
+
+  const onClosed = useCallback(() => {
+    setOpenIndex(null);
+    if (window.location.hash.startsWith("#work/")) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }, []);
+
+  const next = useCallback(() => {
+    const n = (openRef.current + 1) % projects.length;
+    window.history.replaceState(window.history.state, "", `#work/${slugify(projects[n].name)}`);
+    setOpenIndex(n);
+  }, []);
+
+  useEffect(() => {
+    // Deep link on load: open without a history entry so "close" never navigates off-site.
+    const initial = indexFromHash();
+    if (initial >= 0) setOpenIndex(initial);
+    const onPop = () => {
+      const index = indexFromHash();
+      if (index >= 0) setOpenIndex(index);
+      else if (openRef.current !== null) caseStudy.current?.close();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(HORIZONTAL, () => {
+        const distance = () => track.current.scrollWidth - window.innerWidth;
+        const tween = gsap.to(track.current, {
+          x: () => -distance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: section.current,
+            start: "top top",
+            end: () => `+=${distance()}`,
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+          },
+        });
+        // Inner image parallax driven by the horizontal movement.
+        gsap.utils.toArray(".project-card").forEach((card) => {
+          gsap.fromTo(
+            card.querySelector(".project-img"),
+            { xPercent: -6 },
+            {
+              xPercent: 6,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: tween,
+                start: "left right",
+                end: "right left",
+                scrub: true,
+              },
+            },
+          );
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope: section },
+  );
 
   return (
     <section
       id="project"
+      ref={section}
       aria-labelledby="projects-title"
-      className={`relative overflow-hidden py-20 sm:py-24 ${theme?.themeColor}`}
+      className="relative overflow-hidden bg-canvas text-ink lg:motion-safe:h-screen"
     >
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-400/20 blur-3xl" />
-        <div className="absolute right-0 top-1/3 h-80 w-80 rounded-full bg-fuchsia-500/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl" />  
-        <div
-          className={`absolute inset-0 ${
-            isDark
-              ? "bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)]"
-              : "bg-[linear-gradient(rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.04)_1px,transparent_1px)]"
-          } bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_center,black_55%,transparent_100%)]`}
-        />
-      </div>
-
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
-        >
-          {/* Heading */}
-          <motion.div variants={fadeUp} className="mx-auto mb-12 max-w-3xl text-center">
-            <div
-              className={`mx-auto mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-extrabold tracking-[0.2em] uppercase ${
-                isDark
-                  ? "border-white/10 bg-white/5 text-cyan-200"
-                  : "border-slate-200 bg-white/80 text-cyan-700 shadow-sm"
-              }`}
-            >
-              <Sparkles size={14} />
-              Featured Projects
-            </div>
-
-            <h2
-              id="projects-title"
-              className={`text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl ${
-                isDark ? "text-white" : "text-slate-950"
-              }`}
-            >
-              Selected{" "}
-              <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-400 bg-clip-text text-transparent">
-                Work
-              </span>
-            </h2>
-
-            <p
-              className={`mx-auto mt-4 max-w-2xl text-sm leading-7 sm:text-base ${
-                isDark ? "text-slate-300" : "text-slate-600"
-              }`}
-            >
-              Product facing builds with modern UI, APIs, immersive interactions,
-              and real deployment surfaces designed to feel sharp, fast, and memorable.
-            </p>
-          </motion.div>
-
-          {/* Project grid */}
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {projects.map((project, idx) => (
-              <motion.article key={project.name} variants={fadeUp}>
-                <TiltCard className="h-full" max={8}>
-                  <button
-                    type="button"
-                    onClick={() => setSelected(project)}
-                    className={`group relative h-full w-full overflow-hidden rounded-[28px] border text-left transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
-                      isDark
-                        ? "border-white/10 bg-white/[0.05] shadow-[0_10px_40px_rgba(0,0,0,0.28)] hover:border-cyan-300/30 hover:bg-white/[0.07]"
-                        : "border-slate-200/80 bg-white/85 shadow-[0_12px_40px_rgba(15,23,42,0.08)] hover:border-cyan-600/30 hover:shadow-[0_18px_55px_rgba(14,165,233,0.16)]"
-                    }`}
-                  >
-                    {/* Fancy border glow */}
-                    <span className="pointer-events-none absolute inset-0 rounded-[28px] bg-[conic-gradient(from_180deg_at_50%_50%,rgba(34,211,238,.35),transparent_20%,rgba(168,85,247,.28),transparent_55%,rgba(16,185,129,.25),transparent_80%,rgba(34,211,238,.35))] opacity-0 blur-xl transition duration-500 group-hover:opacity-100" />
-
-                    {/* Shine sweep */}
-                    <span className="pointer-events-none absolute -left-1/3 top-0 h-full w-1/2 rotate-12 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 blur-md transition duration-700 group-hover:left-[120%] group-hover:opacity-100" />
-
-                    <div className="relative m-px h-full overflow-hidden rounded-[27px]">
-                      {/* Image */}
-                      <div className="relative aspect-[16/10] w-full overflow-hidden">
-                        <img
-                          src={project.img}
-                          alt={project.name}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-                        />
-
-                        {/* Top badges */}
-                        <div className="absolute left-4 top-4 right-4 flex items-center justify-between">
-                          <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.2em] text-white backdrop-blur-md">
-                            Case Study
-                          </span>
-                          <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[10px] font-bold text-white/90 backdrop-blur-md">
-                            0{idx + 1}
-                          </span>
-                        </div>
-
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent opacity-80" />
-
-                        {/* Hover CTA */}
-                        <div className="absolute inset-x-0 bottom-0 p-5">
-                          <div className="translate-y-4 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-slate-950 shadow-lg">
-                              Explore Project <ArrowRight size={14} />
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div
-                        className={`relative px-5 pb-5 pt-4 ${
-                          isDark
-                            ? "bg-gradient-to-b from-white/[0.03] to-white/[0.015]"
-                            : "bg-gradient-to-b from-white to-slate-50/90"
-                        }`}
-                      >
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <h3
-                            className={`text-lg font-black tracking-tight ${
-                              isDark ? "text-white" : "text-slate-950"
-                            }`}
-                          >
-                            {project.name}
-                          </h3>
-
-                          <span
-                            className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.15em] ${
-                              isDark
-                                ? "bg-cyan-400/10 text-cyan-200"
-                                : "bg-cyan-50 text-cyan-700"
-                            }`}
-                          >
-                            Featured
-                          </span>
-                        </div>
-
-                        <p
-                          className={`line-clamp-3 text-sm leading-6 ${
-                            isDark ? "text-slate-400" : "text-slate-600"
-                          }`}
-                        >
-                          {project.description}
-                        </p>
-
-                        <div className="mt-5 flex flex-wrap gap-2">
-                          {project.tech.map((tech, index) => (
-                            <span
-                              key={tech}
-                              className={`rounded-full px-3 py-1 text-[11px] font-bold transition duration-300 ${
-                                isDark
-                                  ? "border border-cyan-300/10 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300/15"
-                                  : "border border-cyan-100 bg-cyan-50 text-cyan-700 hover:bg-cyan-100"
-                              }`}
-                              style={{ transitionDelay: `${index * 35}ms` }}
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                </TiltCard>
-              </motion.article>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Dialog */}
-      <Dialog
-        open={Boolean(selected)}
-        onClose={() => setSelected(null)}
-        title={selected?.name}
+      <div
+        ref={track}
+        className="flex flex-col gap-10 px-4 py-20 sm:px-6 sm:py-32 lg:px-8 lg:motion-safe:h-full lg:motion-safe:w-max lg:motion-safe:flex-row lg:motion-safe:items-center lg:motion-safe:gap-14 lg:motion-safe:py-0 lg:motion-safe:pl-[max(2rem,calc((100vw-1400px)/2))] lg:motion-safe:pr-[10vw]"
       >
-        {selected && (
-          <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-950/40">
-              <img
-                src={selected.img}
-                alt={`${selected.name} screenshot`}
-                className="h-full min-h-[280px] w-full object-cover"
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: EASE_OUT }}
+          className="shrink-0 lg:motion-safe:w-[34vw] lg:motion-safe:max-w-[520px]"
+        >
+          <p className="flex items-baseline gap-3 border-t border-ink/15 pt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted">
+            <span className="text-ink">03</span> Selected work
+          </p>
+          <h2
+            id="projects-title"
+            className="mt-6 font-display sm:mt-8 text-[clamp(2.5rem,5.4vw,5.25rem)] font-medium leading-[0.98] tracking-[-0.035em]"
+          >
+            Things I&apos;ve{" "}
+            <em className="font-serif font-normal italic text-brand">built</em>{" "}
+            and shipped.
+          </h2>
+          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink-muted">
+            Product-facing builds with modern UI, APIs and real deployment
+            surfaces — each one live and in use.
+          </p>
+          <p className="mt-10 hidden items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted lg:motion-safe:flex">
+            Scroll to explore <span className="h-px w-16 bg-ink/40" />
+          </p>
+          <p className="mt-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-muted lg:motion-safe:hidden">
+            Swipe <span className="h-px w-10 bg-ink/40" />{" "}
+            {String(projects.length).padStart(2, "0")} projects
+          </p>
+        </motion.div>
+
+        {/* Swipeable rail below lg (or with reduced motion); flattens into the pinned track above it */}
+        <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-2 [scrollbar-width:none] sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:gap-8 lg:scroll-px-8 lg:px-8 lg:motion-safe:contents [&::-webkit-scrollbar]:hidden">
+          {projects.map((project, index) => (
+            <ProjectCard
+              key={project.name}
+              project={project}
+              index={index}
+              onOpen={open}
+            />
+          ))}
+
+          <a
+            href="https://github.com/Md-Azharuddin02"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor-label="GitHub"
+            className="group flex w-[70%] shrink-0 snap-start flex-col justify-between gap-10 rounded-sm bg-ink p-7 text-canvas transition-colors duration-500 hover:bg-brand-fill hover:text-on-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:w-[40%] sm:p-8 lg:w-[30%] lg:motion-safe:h-[56vh] lg:motion-safe:w-[26vw]"
+          >
+            <FaGithub size={32} aria-hidden="true" />
+            <span className="font-display text-3xl font-medium leading-[1] tracking-[-0.03em] sm:text-4xl">
+              More experiments <br /> on{" "}
+              <em className="font-serif font-normal italic">GitHub</em>
+            </span>
+            <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em]">
+              Explore repos{" "}
+              <ArrowUpRight
+                size={14}
+                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                aria-hidden="true"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-            </div>
+            </span>
+          </a>
+        </div>
+      </div>
 
-            <div className="flex flex-col justify-center">
-              <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-cyan-300/15 bg-cyan-300/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-cyan-200">
-                <Sparkles size={12} />
-                Project Spotlight
-              </div>
-
-              <p className="text-sm leading-7 text-slate-300">
-                {selected.extended}
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {selected.tech.map((tech) => (
-                  <span
-                    key={tech}
-                    className="rounded-full border border-cyan-300/10 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-200"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-7 flex flex-wrap gap-3">
-                <MagneticButton>
-                  <Button
-                    as="a"
-                    href={selected.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group"
-                  >
-                    Live Site
-                    <ExternalLink
-                      size={16}
-                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    />
-                  </Button>
-                </MagneticButton>
-              </div>
-            </div>
-          </div>
-        )}
-      </Dialog>
+      {openIndex !== null && (
+        <CaseStudy
+          ref={caseStudy}
+          project={projects[openIndex]}
+          index={openIndex}
+          total={projects.length}
+          onRequestClose={requestClose}
+          onClosed={onClosed}
+          onNext={next}
+        />
+      )}
     </section>
   );
 }

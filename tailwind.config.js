@@ -68,6 +68,17 @@ export default {
         'gradient-shift': 'gradient-shift 6s ease infinite',
       },
       colors: {
+        canvas: 'rgb(var(--canvas) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        'on-brand': 'rgb(var(--on-brand) / <alpha-value>)',
+        ink: {
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          muted: 'rgb(var(--ink-muted) / <alpha-value>)',
+        },
+        brand: {
+          DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
+          fill: 'rgb(var(--brand-fill) / <alpha-value>)',
+        },
         accent: {
           DEFAULT: '#22D3EE',
           foreground: '#03151A',
@@ -80,11 +91,16 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Archivo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Space Grotesk"', 'Archivo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['Newsreader', 'ui-serif', 'Georgia', 'serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
       boxShadow: {
-        glow: '0 0 40px -10px rgb(34 211 238 / 0.5)',
+        glow: '0 0 40px -10px rgb(var(--brand-fill) / 0.55)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
